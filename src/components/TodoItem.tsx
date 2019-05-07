@@ -8,9 +8,11 @@ interface TodoItemProps {
 
 export const TodoItem: React.FC<TodoItemProps> = props => {
   return (
-    <span>
-      {props.item}
-      <button onClick={() => props.handleDelete(props.idx)}>X</button>
-    </span>
+    <div>
+      <span>
+        {props.item}
+        <button onClick={() => props.handleDelete(props.idx)}>X</button>
+      </span>
+    </div>
   );
 };
