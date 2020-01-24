@@ -18,6 +18,8 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import { HashRouter, Route, Switch, Link } from 'react-router-dom';
+
 // import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
 
@@ -50,6 +52,8 @@ class App extends React.Component</*AppProps*/any> {
       <div>
         <h2>StravaTed</h2>
         Eat more pizza and burgers!
+        <br />
+        <Link to='/activities'>Show Activities</Link>
         <br />
         <Button
           variant='contained'
