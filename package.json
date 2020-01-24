@@ -4,7 +4,9 @@
   "description": "extensions to strava",
   "main": "index.js",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "buildW": "webpack --watch",
+    "tsLint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "keywords": [
     "typescript",
