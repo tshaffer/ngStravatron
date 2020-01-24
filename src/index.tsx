@@ -8,7 +8,7 @@ import thunkMiddleware from 'redux-thunk';
 
 import { HashRouter, Route, Switch, Link } from 'react-router-dom';
 
-import rootReducer from './reducers';
+import { rootReducer } from './models';
 
 import App from './components/app';
 import Activities from './components/activities';
