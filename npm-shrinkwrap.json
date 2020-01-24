@@ -86,6 +86,12 @@
         "react-is": "^16.8.0"
       }
     },
+    "@types/history": {
+      "version": "4.7.4",
+      "resolved": "https://registry.npmjs.org/@types/history/-/history-4.7.4.tgz",
+      "integrity": "sha512-+o2igcuZA3xtOoFH56s+MCZVidwlJNcJID57DSCyawS2i910yG9vkwehCjJNZ6ImhCR5S9DbvIJKyYHcMyOfMw==",
+      "dev": true
+    },
     "@types/hoist-non-react-statics": {
       "version": "3.3.1",
       "resolved": "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz",
