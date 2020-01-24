@@ -8,8 +8,7 @@ import thunkMiddleware from 'redux-thunk';
 
 import rootReducer from './reducers';
 
-import { App } from './App';
-// import store from './store/store';
+import { App } from './components/App';
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
