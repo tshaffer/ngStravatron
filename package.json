@@ -1,7 +1,7 @@
 {
-  "name": "typescript-react-redux-boilerplate",
-  "version": "1.0.0",
-  "description": "boilerplate for react-redux project in typescript",
+  "name": "ng-stravatron",
+  "version": "0.0.1",
+  "description": "extensions to strava",
   "main": "index.js",
   "scripts": {
     "build": "webpack"
@@ -11,9 +11,10 @@
     "react",
     "redux"
   ],
-  "author": "dengthatsgood",
+  "author": "teddy",
   "license": "ISC",
   "dependencies": {
+    "@material-ui/core": "^4.8.3",
     "@types/node": "^12.0.0",
     "@types/react": "^16.8.15",
     "@types/react-dom": "^16.8.4",
@@ -27,5 +28,8 @@
     "typescript": "^3.4.5",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/material-ui": "^0.21.7"
   }
 }

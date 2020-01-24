@@ -3,7 +3,9 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import * as MyTypes from "MyTypes";
 import { actionTypes } from "../actions";
-import { TodoItem } from "../components";
+// import { TodoItem } from "../components";
+// import ReactDOM from 'react-dom';
+import Button from '@material-ui/core/Button';
 
 interface TodoContainerState {
   todoInput: string;
@@ -43,28 +45,33 @@ class TodoContainer extends React.Component<TodoContainerProps, TodoContainerSta
   };
 
   render() {
-    let todoJSX: JSX.Element[] | JSX.Element;
-    if (!this.props.todoList.length) {
-      todoJSX = <p>No to do</p>;
-    } else {
-      todoJSX = this.props.todoList.map((item, idx) => {
-        return (
-          <TodoItem item={item} key={idx} idx={idx} handleDelete={this.handleDeleteButtonClick} />
-        );
-      });
-    }
-
     return (
-      <div>
-        {todoJSX}
-        <input
-          onChange={this.handleTextChange}
-          placeholder={"New To Do Here"}
-          value={this.state.todoInput}
-        />
-        <button onClick={this.handleButtonClick}>Add To Do</button>
-      </div>
+      <Button variant="contained" color="primary">
+        Hello World
+      </Button>
     );
+    // let todoJSX: JSX.Element[] | JSX.Element;
+    // if (!this.props.todoList.length) {
+    //   todoJSX = <p>No to do</p>;
+    // } else {
+    //   todoJSX = this.props.todoList.map((item, idx) => {
+    //     return (
+    //       <TodoItem item={item} key={idx} idx={idx} handleDelete={this.handleDeleteButtonClick} />
+    //     );
+    //   });
+    // }
+
+    // return (
+    //   <div>
+    //     {todoJSX}
+    //     <input
+    //       onChange={this.handleTextChange}
+    //       placeholder={"New To Do Here"}
+    //       value={this.state.todoInput}
+    //     />
+    //     <button onClick={this.handleButtonClick}>Add To Do</button>
+    //   </div>
+    // );
   }
 }
 
