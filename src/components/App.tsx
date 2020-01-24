@@ -1,5 +1,5 @@
-// import * as React from "react";
-// import TodoContainer from "../containers/TodoContainer";
+// import * as React from 'react';
+// import TodoContainer from '../containers/TodoContainer';
 
 // export const App: React.FC<{}> = () => {
 //   return (
@@ -40,7 +40,7 @@ class App extends React.Component</*AppProps*/any> {
 
   /*
         <Button
-          variant="contained" color="primary"
+          variant='contained' color='primary'
           onClick={this.handleShowActivities}
         />
   */
@@ -52,8 +52,8 @@ class App extends React.Component</*AppProps*/any> {
         Eat more pizza and burgers!
         <br />
         <Button
-          variant="contained"
-          color="primary"
+          variant='contained'
+          color='primary'
           onClick={this.handleShowActivities}
         >
           Show athlete activities
