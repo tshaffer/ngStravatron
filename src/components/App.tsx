@@ -1,19 +1,3 @@
-// import * as React from 'react';
-// import TodoContainer from '../containers/TodoContainer';
-
-// export const App: React.FC<{}> = () => {
-//   return (
-//     <>
-//       <h1>React Redux Typescript</h1>
-//       <TodoContainer />
-//     </>
-//   );
-// };
-
-// export interface AppProps {
-//   onShowActivities: () => any;
-// }
-
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -21,12 +5,15 @@ import { connect } from 'react-redux';
 import { HashRouter, Route, Switch, Link } from 'react-router-dom';
 import { createHashHistory } from 'history';
 
-// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
 
-import Activities from './activities';
+import { loadSummaryActivities } from '../controllers';
 
-class App extends React.Component</*AppProps*/any> {
+export interface AppProps {
+  onShowActivities: () => any;
+}
+
+class App extends React.Component<AppProps> {
 
   constructor(props: any) {
 
@@ -39,7 +26,7 @@ class App extends React.Component</*AppProps*/any> {
 
   handleShowActivities() {
     console.log('handleShowActivities');
-    // this.props.onShowActivities();
+    this.props.onShowActivities();
     const hashHistory = createHashHistory();
     hashHistory.push('/activities');
   }
@@ -72,7 +59,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({
-    // onShowActivities: loadSummaryActivities,
+    onShowActivities: loadSummaryActivities,
   }, dispatch);
 };
 
