@@ -44,15 +44,6 @@ class App extends React.Component</*AppProps*/any> {
     hashHistory.push('/activities');
   }
 
-  /*
-        <Switch>
-          <Route path='/activities'>
-            <Activities />
-          </Route>
-        </Switch>
-        <Link to='/activities'>Show Activities</Link>
-  */
-
   render() {
     return (
       <HashRouter>

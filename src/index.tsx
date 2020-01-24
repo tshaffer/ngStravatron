@@ -19,16 +19,15 @@ const store = createStore(
     applyMiddleware(thunkMiddleware)
   ));
 
-/*
-*/
-
 ReactDOM.render(
   <Provider store={store}>
     <HashRouter>
-      <App />
       <Switch>
         <Route path='/activities'>
           <Activities />
+        </Route>
+        <Route path='/'>
+          <App />
         </Route>
       </Switch>
     </HashRouter>
