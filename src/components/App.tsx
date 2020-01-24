@@ -19,9 +19,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { HashRouter, Route, Switch, Link } from 'react-router-dom';
+import { createHashHistory } from 'history';
 
 // import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
+
+import Activities from './activities';
 
 class App extends React.Component</*AppProps*/any> {
 
@@ -37,32 +40,36 @@ class App extends React.Component</*AppProps*/any> {
   handleShowActivities() {
     console.log('handleShowActivities');
     // this.props.onShowActivities();
-    // hashHistory.push('/activities');
+    const hashHistory = createHashHistory();
+    hashHistory.push('/activities');
   }
 
   /*
-        <Button
-          variant='contained' color='primary'
-          onClick={this.handleShowActivities}
-        />
+        <Switch>
+          <Route path='/activities'>
+            <Activities />
+          </Route>
+        </Switch>
+        <Link to='/activities'>Show Activities</Link>
   */
 
   render() {
     return (
-      <div>
-        <h2>StravaTed</h2>
-        Eat more pizza and burgers!
-        <br />
-        <Link to='/activities'>Show Activities</Link>
-        <br />
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={this.handleShowActivities}
-        >
-          Show athlete activities
-        </Button>
-      </div>
+      <HashRouter>
+        <div>
+          <h2>StravaTed</h2>
+          Eat more pizza and burgers!
+          <br />
+          <br />
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={this.handleShowActivities}
+          >
+            Show athlete activities
+          </Button>
+        </div>
+      </HashRouter>
     );
   }
 }

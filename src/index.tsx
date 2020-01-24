@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 
 import { HashRouter, Route, Switch, Link } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
 
 import rootReducer from './reducers';
 
@@ -19,6 +18,9 @@ const store = createStore(
   rootReducer, /* preloadedState, */ composeEnhancers(
     applyMiddleware(thunkMiddleware)
   ));
+
+/*
+*/
 
 ReactDOM.render(
   <Provider store={store}>
