@@ -4,7 +4,39 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-class DetailedActivityComponent extends React.Component<any> {
+import {
+  loadDetailedActivity, 
+  forceReloadEfforts, 
+  getMmpData,
+} from '../controllers';
+import {
+  SegmentsMap,
+  StravatronDetailedSegment,
+  StravatronSegmentEffortsBySegment,
+  StravatronSegmentEffort,
+  StravatronActivity,
+} from '../types';
+import {
+  getStravatronDetailedActivityAttributes,
+  getSegmentEffortsForActivity,
+  getSegments,
+  getEffortsForActivitySegments
+} from '../selectors/detailedActivity';
+import moment = require('moment');
+
+export interface DetailedActivityProps {
+  params: any;
+  detailedActivity: StravatronActivity;
+  segmentEfforts: StravatronSegmentEffort[];
+  effortsForSegments: StravatronSegmentEffortsBySegment;
+  segmentsMap: SegmentsMap;
+  onLoadDetailedActivity: (activityId: string) => any;
+  onForceReloadEfforts: (activityId: string) => any;
+  onGetMmpData: (activityId: string) => any;
+}
+
+
+class DetailedActivity extends React.Component<any> {
   render() {
     return (
       <div>pizza</div>
@@ -22,4 +54,4 @@ const mapDispatchToProps = (dispatch: any) => {
   }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DetailedActivityComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(DetailedActivity);

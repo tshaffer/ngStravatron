@@ -12,7 +12,7 @@ import { rootReducer } from './models';
 
 import App from './components/app';
 import Activities from './components/activities';
-import DetailedActivityComponent from './components/detailedActivity';
+import DetailedActivity from './components/detailedActivity';
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
@@ -25,7 +25,7 @@ ReactDOM.render(
     <HashRouter>
       <Switch>
         <Route path='/detailedActivity/:id'>
-          <DetailedActivityComponent/>
+          <DetailedActivity/>
         </Route>
         <Route path='/activities'>
           <Activities />

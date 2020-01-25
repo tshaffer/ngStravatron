@@ -8,10 +8,10 @@ import {
 
 export interface StravaModelState {
   activities: ActivitiesMap;
-  // detailedActivities: DetailedActivityAttributesMap;
-  // segments: SegmentsMap;
-  // segmentEfforts: SegmentEffortsMap;
-  // streams: StravatronActivityStreams;
+  detailedActivities: DetailedActivityAttributesMap;
+  segments: SegmentsMap;
+  segmentEfforts: SegmentEffortsMap;
+  streams: StravatronActivityStreams;
 }
 
 export interface ActivitiesMap {
