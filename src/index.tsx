@@ -24,15 +24,11 @@ ReactDOM.render(
   <Provider store={store}>
     <HashRouter>
       <Switch>
+        <Route exact path='/' component={App} />
         <Route path='/detailedActivity/:id'>
-          <DetailedActivity/>
+          <DetailedActivity></DetailedActivity>
         </Route>
-        <Route path='/activities'>
-          <Activities />
-        </Route>
-        <Route path='/'>
-          <App />
-        </Route>
+        <Route exact path='/activities' component={Activities} />
       </Switch>
     </HashRouter>
   </Provider>,
