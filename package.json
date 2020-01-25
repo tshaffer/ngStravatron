@@ -6,6 +6,8 @@
   "scripts": {
     "build": "webpack",
     "buildW": "webpack --watch",
+    "ogBuild": "node node_modules/webpack/bin/webpack --config ./webpack.config.js",
+    "ogBuildW": "node node_modules/webpack/bin/webpack --config ./webpack.config.js --watch",
     "tsLint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "keywords": [
