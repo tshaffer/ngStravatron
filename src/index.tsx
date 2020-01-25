@@ -25,9 +25,7 @@ ReactDOM.render(
     <HashRouter>
       <Switch>
         <Route exact path='/' component={App} />
-        <Route path='/detailedActivity/:id'>
-          <DetailedActivity></DetailedActivity>
-        </Route>
+        <Route exact path='/detailedActivity/:id' component={DetailedActivity}/>
         <Route exact path='/activities' component={Activities} />
       </Switch>
     </HashRouter>

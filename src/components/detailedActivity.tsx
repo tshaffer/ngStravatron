@@ -58,18 +58,21 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
   }
 
   componentWillMount() {
-    console.log('DetailedActivity, id:', this.props.params.id);
-    this.props.onLoadDetailedActivity(this.props.params.id);
+    console.log('componentWillMount');
+    console.log(this.props);
+    const activityId = (this.props as any).match.params.id;
+    console.log('DetailedActivity, id:', activityId);
+    this.props.onLoadDetailedActivity(activityId);
   }
 
   handleFetchEfforts(activityId: any) {
     console.log('handleFetchEfforts: ', activityId);
-    this.props.onForceReloadEfforts(this.props.params.id);
+    this.props.onForceReloadEfforts(activityId);
   }
 
   handleGetMmpData(activityId: any) {
     console.log('handleGetMmpData: ', activityId);
-    this.props.onGetMmpData(this.props.params.id);
+    this.props.onGetMmpData(activityId);
   }
 
   buildRideSummaryHeader(detailedActivity: StravatronActivity) {
@@ -449,12 +452,12 @@ function mapStateToProps(state: any, ownProps: any) {
 
   console.log(state);
   console.log(ownProps);
-  
+
   return {
     params: ownProps.params,
-    detailedActivity: getStravatronDetailedActivityAttributes(state, parseInt(ownProps.params.id, 10)),
-    segmentEfforts: getSegmentEffortsForActivity(state, parseInt(ownProps.params.id, 10)),
-    effortsForSegments: getEffortsForActivitySegments(state, parseInt(ownProps.params.id, 10)),
+    detailedActivity: getStravatronDetailedActivityAttributes(state, parseInt(ownProps.match.params.id, 10)),
+    segmentEfforts: getSegmentEffortsForActivity(state, parseInt(ownProps.match.params.id, 10)),
+    effortsForSegments: getEffortsForActivitySegments(state, parseInt(ownProps.match.params.id, 10)),
     segmentsMap: getSegments(state),
   };
 }
