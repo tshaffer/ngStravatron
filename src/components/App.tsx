@@ -2,7 +2,7 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { HashRouter, Route, Switch, Link } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { createHashHistory } from 'history';
 
 import Button from '@material-ui/core/Button';
@@ -33,21 +33,19 @@ class App extends React.Component<AppProps> {
 
   render() {
     return (
-      <HashRouter>
-        <div>
-          <h2>StravaTed</h2>
-          Eat more pizza and burgers!
+      <div>
+        <h2>StravaTed</h2>
+        Eat more pizza and burgers!
           <br />
-          <br />
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={this.handleShowActivities}
-          >
-            Show athlete activities
+        <br />
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={this.handleShowActivities}
+        >
+          Show athlete activities
           </Button>
-        </div>
-      </HashRouter>
+      </div>
     );
   }
 }

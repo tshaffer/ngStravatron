@@ -4,6 +4,8 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import { createHashHistory } from 'history';
+
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,7 +13,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
-
 
 import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '../types';
 import { getActivities } from '../selectors';
@@ -21,7 +22,7 @@ export interface ActivitiesProps {
   activities: ActivitiesMap;
 }
 
-class Activities extends React.Component<any> {
+class Activities extends React.Component<ActivitiesProps> {
 
   constructor(props: ActivitiesProps) {
     super(props);
@@ -30,8 +31,9 @@ class Activities extends React.Component<any> {
   }
 
   handleShowDetailedMap(activityId: number) {
-    console.log('handleShowDetailedMap: ', activityId);
-    // hashHistory.push('/detailedActivity/' + activityId.toString());
+    console.log('handleShowDetailedActivity: ', activityId);
+    const hashHistory = createHashHistory();
+    hashHistory.push('/detailedActivity/' + activityId.toString());
   }
 
 
@@ -237,10 +239,6 @@ class Activities extends React.Component<any> {
         Loading...
       </div>
     );
-
-    // return (
-    //   <div>pizza</div>
-    // );
   }
 }
 
