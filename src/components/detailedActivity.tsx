@@ -37,7 +37,7 @@ import {
 import moment = require('moment');
 
 export interface DetailedActivityProps {
-  params: any;
+  activityId: number;
   detailedActivity: StravatronActivity;
   segmentEfforts: StravatronSegmentEffort[];
   effortsForSegments: StravatronSegmentEffortsBySegment;
@@ -46,7 +46,6 @@ export interface DetailedActivityProps {
   onForceReloadEfforts: (activityId: number) => any;
   onGetMmpData: (activityId: number) => any;
 }
-
 
 class DetailedActivity extends React.Component<DetailedActivityProps> {
 
@@ -58,19 +57,15 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
   }
 
   componentWillMount() {
-    console.log('componentWillMount');
-    console.log(this.props);
-    const activityId = (this.props as any).match.params.id;
-    console.log('DetailedActivity, id:', activityId);
-    this.props.onLoadDetailedActivity(activityId);
+    this.props.onLoadDetailedActivity(this.props.activityId);
   }
 
-  handleFetchEfforts(activityId: any) {
+  handleFetchEfforts(activityId: number) {
     console.log('handleFetchEfforts: ', activityId);
     this.props.onForceReloadEfforts(activityId);
   }
 
-  handleGetMmpData(activityId: any) {
+  handleGetMmpData(activityId: number) {
     console.log('handleGetMmpData: ', activityId);
     this.props.onGetMmpData(activityId);
   }
@@ -454,7 +449,7 @@ function mapStateToProps(state: any, ownProps: any) {
   console.log(ownProps);
 
   return {
-    params: ownProps.params,
+    activityId: parseInt(ownProps.match.params.id, 10),
     detailedActivity: getStravatronDetailedActivityAttributes(state, parseInt(ownProps.match.params.id, 10)),
     segmentEfforts: getSegmentEffortsForActivity(state, parseInt(ownProps.match.params.id, 10)),
     effortsForSegments: getEffortsForActivitySegments(state, parseInt(ownProps.match.params.id, 10)),
