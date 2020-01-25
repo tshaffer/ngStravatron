@@ -3,7 +3,7 @@ import {
   StravatronActivity, 
   DetailedActivityAttributesMap, 
  } from '../types';
-import { StravaModelBaseAction, DetailedActivityAction } from './baseAction';
+import { StravaModelBaseAction } from './baseAction';
 
 // ------------------------------------
 // Constants
