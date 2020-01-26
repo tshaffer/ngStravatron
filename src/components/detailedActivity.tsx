@@ -205,8 +205,10 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
             (
               <span>
                 <span>{bestEffortTime}</span>
+                <span> on </span>
                 <span className='smallDimDate'>{bestEffortDate}</span>
                 <span>, {nextBestEffortTime}</span>
+                <span> on </span>
                 <span className='smallDimDate'>{nextBestEffortDate}</span>
               </span>
             );
@@ -243,12 +245,15 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
           (
             <span>
               <span>{Converters.elapsedTimeToTimeString(recentEfforts[0].movingTime)}</span>
+              <span> on </span>
               <span className='smallDimDate'>{Converters.formatDate(recentEfforts[0].date)}</span>
               <span>{recentEfforts[1].separator}</span>
               <span>{Converters.elapsedTimeToTimeString(recentEfforts[1].movingTime)}</span>
+              <span> on </span>
               <span className='smallDimDate'>{Converters.formatDate(recentEfforts[1].date)}</span>
               <span>{recentEfforts[2].separator}</span>
               <span>{Converters.elapsedTimeToTimeString(recentEfforts[2].movingTime)}</span>
+              <span> on </span>
               <span className='smallDimDate'>{Converters.formatDate(recentEfforts[2].date)}</span>
             </span>
           );
