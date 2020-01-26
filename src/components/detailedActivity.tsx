@@ -4,6 +4,8 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router-dom';
+
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -428,6 +430,9 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
     // <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
     return (
       <div>
+        <Link to='/'>Home</Link>
+        <br />
+        <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
         <br />
         {rideSummaryHeader}
         <br />
