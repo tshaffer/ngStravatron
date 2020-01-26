@@ -88,10 +88,12 @@ function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
     const order = cmp(a[0], b[0]);
-    if (order !== 0) return order;
+    if (order !== 0) {
+      return order;
+    }
     return a[1] - b[1];
   });
-  return stabilizedThis.map(el => el[0]);
+  return stabilizedThis.map((el) => el[0]);
 }
 
 
@@ -100,10 +102,24 @@ export interface ActivitiesProps {
   activities: ActivitiesMap;
 }
 
-class Activities extends React.Component<ActivitiesProps> {
+export interface ActivitiesComponentProps {
+  order: Order;
+  setOrder: Order;
+  orderBy: keyof ActivityData;
+  setOrderBy: keyof ActivityData;
+}
+
+class Activities extends React.Component<ActivitiesProps, ActivitiesComponentProps> {
 
   constructor(props: ActivitiesProps) {
     super(props);
+
+    this.state = {
+      order: 'asc',
+      setOrder: 'asc',
+      orderBy: 'date',
+      setOrderBy: 'date',
+    };
 
     this.handleShowDetailedMap = this.handleShowDetailedMap.bind(this);
   }
@@ -277,40 +293,46 @@ class Activities extends React.Component<ActivitiesProps> {
   }
 
   render() {
+
     if (Object.keys(this.props.activities).length > 0) {
 
-      const activityRows = this.buildActivityRows();
+      // const activityRows = this.buildActivityRows();
 
+      const enhancedTable = this.enhancedTable();
       return (
-        <div id='SummaryActivities'>
-          <br />
-
-          <TableContainer>
-            <Table style={{ width: '1597px' }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Date</TableCell>
-                  <TableCell style={{ width: '192px' }}>Name</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Riding Time</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Distance</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Elevation</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Kilojoules</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>NP</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>TSS</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Watts</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Watts</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Heartrate</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Heartrate</TableCell>
-                  <TableCell style={{ width: '64px', whiteSpace: 'normal' }}></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {activityRows}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
+        {enhancedTable}
       );
+
+      // return (
+      //   <div id='SummaryActivities'>
+      //     <br />
+
+      //     <TableContainer>
+      //       <Table style={{ width: '1597px' }}>
+      //         <TableHead>
+      //           <TableRow>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Date</TableCell>
+      //             <TableCell style={{ width: '192px' }}>Name</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Riding Time</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Distance</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Elevation</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Kilojoules</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>NP</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>TSS</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Watts</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Watts</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Heartrate</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Heartrate</TableCell>
+      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}></TableCell>
+      //           </TableRow>
+      //         </TableHead>
+      //         <TableBody>
+      //           {activityRows}
+      //         </TableBody>
+      //       </Table>
+      //     </TableContainer>
+      //   </div>
+      // );
     }
     return (
       <div>
@@ -372,7 +394,7 @@ class Activities extends React.Component<ActivitiesProps> {
   enhancedTable(): any {
 
     const rows: ActivityData[] = [];
-    const activities: StravatronSummaryActivity[] = [];
+    // const activities: StravatronSummaryActivity[] = [];
 
     const activitiesLUT = this.props.activities;
 
@@ -398,8 +420,10 @@ class Activities extends React.Component<ActivitiesProps> {
       }
     }
 
-    const [order, setOrder] = React.useState<Order>('desc');
-    const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
+    const order = this.state.order;
+    const orderBy = this.state.orderBy;
+    // const [order, setOrder] = React.useState<Order>('desc');
+    // const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
 
     const tableHead = this.getTableHead();
     return (
