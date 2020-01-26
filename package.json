@@ -9,8 +9,8 @@
     "ogBuild": "node node_modules/webpack/bin/webpack --config ./webpack.config.js",
     "ogBuildW": "node node_modules/webpack/bin/webpack --config ./webpack.config.js --watch",
     "otsLint": "tslint -c tslint.json 'src/**/*.ts'",
-    "poo": "tslint --project tsconfig.json --config tslint.json \"src/**/*.ts\"",
-    "poop": "tslint --project tsconfig.json --config tslint.json \"src/**/*.tsx\""
+    "tslint": "tslint --project tsconfig.json --config tslint.json \"src/**/*.ts\"",
+    "tslintX": "tslint --project tsconfig.json --config tslint.json \"src/**/*.tsx\""
   },
   "keywords": [
     "typescript",

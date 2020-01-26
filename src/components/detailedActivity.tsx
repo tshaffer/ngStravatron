@@ -4,15 +4,12 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { createHashHistory } from 'history';
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Button from '@material-ui/core/Button';
 
 import * as Converters from '../utilities/converters';
 
@@ -262,8 +259,6 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
 
   buildSegmentEffortRow(segmentEffort: StravatronSegmentEffort) {
 
-    const self = this;
-
     // TEDTODO - id confusion
     const segmentId = segmentEffort.segmentId;
     // const segment: Segment = this.props.segmentsMap[segmentId];
@@ -291,7 +286,7 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
         </td>
     */
 
-    const { averageWatts, averageHeartrate, maxHeartrate, normalizedPower } = segmentEffort;
+    const { averageWatts, normalizedPower } = segmentEffort;
     const normalizedPowerLbl = isNil(normalizedPower) ? '' : normalizedPower.toFixed(1);
     const averageWattsLbl = isNil(averageWatts) ? 0 : averageWatts;
 
