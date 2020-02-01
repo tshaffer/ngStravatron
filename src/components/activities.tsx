@@ -49,16 +49,6 @@ interface HeadCell {
   numeric: boolean;
 }
 
-// const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof ActivityData) => {
-//   const isAsc = orderBy === property && order === 'asc';
-//   setOrder(isAsc ? 'desc' : 'asc');
-//   setOrderBy(property);
-// };
-
-// const createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
-//   handleRequestSort(event, property);
-// };
-
 function desc<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -112,6 +102,10 @@ class EnhancedTableHead extends React.Component<EnhancedTableProps> {
 
     const { order, orderBy } = this.props;
 
+    console.log('EnhancedTableHead:');
+    console.log('order: ', order);
+    console.log('orderBy: ', orderBy);
+
     return (
       <TableHead>
         <TableRow>
@@ -148,9 +142,7 @@ export interface ActivitiesProps {
 
 export interface ActivitiesComponentProps {
   order: Order;
-  setOrder: Order;
   orderBy: keyof ActivityData;
-  setOrderBy: keyof ActivityData;
 }
 
 // tslint:disable-next-line: max-classes-per-file
@@ -161,12 +153,11 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
     this.state = {
       order: 'asc',
-      setOrder: 'asc',
       orderBy: 'date',
-      setOrderBy: 'date',
     };
 
     this.handleShowDetailedMap = this.handleShowDetailedMap.bind(this);
+    this.handleRequestSort = this.handleRequestSort.bind(this);
   }
 
   handleShowDetailedMap(activityId: number) {
@@ -342,10 +333,10 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
       // const activityRows = this.buildActivityRows();
 
-      const enhancedTable = this.enhancedTable();
-      return (
-        { enhancedTable }
-      );
+      // const enhancedTable = this.enhancedTable();
+      // return (
+      //   { enhancedTable }
+      // );
 
       // return (
       //   <div id='SummaryActivities'>
@@ -447,37 +438,10 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     );
   }
 
-  // handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
-
-  //   const order = this.state.order;
-  //   // const setOrder = this.state.setOrder;
-  //   const orderBy = this.state.orderBy;
-  //   // const setOrderBy = this.state.setOrderBy;
-
-  //   const isAsc = orderBy === property && order === 'asc';
-  //   this.setState({ setOrder: isAsc ? 'desc' : 'asc' });
-  //   this.setState({ setOrderBy: property });
-  // }
-
-  enhancedTable(): any {
-
-    return (
-      <div>Pizza</div>
-    );
-  }
-
   flibbet(): any {
 
     let order = this.state.order;
-    let setOrder = this.state.setOrder;
     let orderBy = this.state.orderBy;
-    let setOrderBy = this.state.setOrderBy;
-
-    // const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof ActivityData) => {
-    //   const isAsc = orderBy === property && order === 'asc';
-    //   this.setState( { setOrder: isAsc ? 'desc' : 'asc'});
-    //   this.setState( { setOrderBy: property});
-    // };
 
     const rows: ActivityData[] = [];
 
@@ -507,10 +471,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
     order = this.state.order;
     orderBy = this.state.orderBy;
-    setOrder = this.state.setOrder;
-    setOrderBy = this.state.setOrderBy;
-    // const [order, setOrder] = React.useState<Order>('desc');
-    // const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
 
     const tableHead = this.getTableHead();
     return (
@@ -556,18 +516,17 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
   }
 
   handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
+    const orderBy = this.state.orderBy;
+    const order = this.state.order;
+    const isAsc = orderBy === property && order === 'asc';
+    this.setState({ 
+      order: isAsc ? 'desc' : 'asc' });
+    this.setState({
+      orderBy: property });
 
-    // const order = this.state.order;
-    // // const setOrder = this.state.setOrder;
-    // const orderBy = this.state.orderBy;
-    // // const setOrderBy = this.state.setOrderBy;
-
-    // const isAsc = orderBy === property && order === 'asc';
-    // this.setState({ setOrder: isAsc ? 'desc' : 'asc' });
-    // this.setState({ setOrderBy: property });
-    console.log('handleRequestSort invoked');
-    console.log('property');
-    console.log(property);
+    console.log('handleRequestSort');
+    console.log('order: ', this.state.order);
+    console.log('orderBy: ', this.state.orderBy);
   }
 
   render() {
