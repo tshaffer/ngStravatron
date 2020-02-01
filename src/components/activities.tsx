@@ -234,7 +234,31 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     );
   }
 
-  buildActivityRows(): any[] {
+  getPrintableActivity(activity: StravatronActivity): any {
+    
+    const printableActivity: any = {};
+
+    printableActivity.kilojoules = '';
+    if (activity.kilojoules) {
+      printableActivity.kilojoules = activity.kilojoules.toFixed(0);
+    }
+
+    printableActivity.date = Converters.getDateTime(activity.startDateLocal);
+    printableActivity.name = activity.name;
+    printableActivity.ridingTime = Converters.getMovingTime(activity.movingTime);
+    printableActivity.distance = Converters.metersToMiles(activity.distance).toFixed(1) + ' mi';
+    printableActivity.elevation = Converters.metersToFeet(activity.totalElevationGain).toFixed(0) + ' ft';
+    printableActivity.np = isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(1);
+    printableActivity.tss = isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(1);
+    printableActivity.averageWatts = isNil(activity.averageWatts) ? 0 : activity.averageWatts;
+    printableActivity.maxWatts = activity.maxWatts;
+    printableActivity.averageHeartrate = activity.averageHeartrate;
+    printableActivity.maxHeartrate = activity.maxHeartrate;
+  
+    return printableActivity;
+  }
+
+  getActivityRows(): any[] {
 
     const activities: StravatronSummaryActivity[] = [];
 
@@ -262,11 +286,9 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       return 0;
     });
 
-    const self = this;
     const activityRows = activities.map((activity) => {
-      // const activityRow = self.buildSummaryRow(activity);
-      // return activityRow;
       return activity;
+      // return this.getPrintableActivity(activity);
     });
     return activityRows;
   }
@@ -287,7 +309,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
     if (Object.keys(this.props.activities).length > 0) {
 
-      const rows = this.buildActivityRows();
+      const rows = this.getActivityRows();
 
       const order = this.state.order;
       const orderBy = this.state.orderBy;
