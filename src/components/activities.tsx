@@ -95,6 +95,7 @@ interface EnhancedTableProps {
 class EnhancedTableHead extends React.Component<EnhancedTableProps> {
 
   createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+    console.log('createSortHandler invoked');
     this.props.onRequestSort(event, property);
   }
 
@@ -110,29 +111,29 @@ class EnhancedTableHead extends React.Component<EnhancedTableProps> {
       <TableHead>
         <TableRow>
           {headCells.map((headCell) => (
-          <TableCell
-          key={headCell.id}
-          align={headCell.numeric ? 'right' : 'left'}
-          padding={headCell.disablePadding ? 'none' : 'default'}
-          sortDirection={orderBy === headCell.id ? order : false}
-        >
-          <TableSortLabel
-            active={orderBy === headCell.id}
-            direction={orderBy === headCell.id ? order : 'asc'}
-            onClick={this.createSortHandler(headCell.id)}
-          >
-            {headCell.label}
-            {orderBy === headCell.id ? (
-              <span>
-                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-              </span>
-            ) : null}
-          </TableSortLabel>
-        </TableCell>
-      ))}
-      </TableRow>
+            <TableCell
+              key={headCell.id}
+              align={headCell.numeric ? 'right' : 'left'}
+              padding={headCell.disablePadding ? 'none' : 'default'}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={this.createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <span>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </span>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+        </TableRow>
       </TableHead>
-    )
+    );
   }
 }
 
@@ -515,14 +516,20 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     );
   }
 
+
+
+
+
   handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
     const orderBy = this.state.orderBy;
     const order = this.state.order;
     const isAsc = orderBy === property && order === 'asc';
-    this.setState({ 
-      order: isAsc ? 'desc' : 'asc' });
     this.setState({
-      orderBy: property });
+      order: isAsc ? 'desc' : 'asc'
+    });
+    this.setState({
+      orderBy: property
+    });
 
     console.log('handleRequestSort');
     console.log('order: ', this.state.order);
@@ -533,7 +540,10 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
     if (Object.keys(this.props.activities).length > 0) {
 
-      const activityRows = this.buildActivityRows();
+      const rows = this.buildActivityRows();
+
+      const order = this.state.order;
+      const orderBy = this.state.orderBy;
 
       return (
         <div>
@@ -542,15 +552,44 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               size={'small'}
             >
               <EnhancedTableHead
-                order={this.state.order}
-                orderBy={this.state.orderBy}
+                order={order}
+                orderBy={orderBy}
                 onRequestSort={this.handleRequestSort}
               />
+              <TableBody>
+                {stableSort(rows, getSorting(order, orderBy))
+                  .slice(0, 0 + 12)
+                  .map((row, index) => {
+                    const labelId = `enhanced-table-checkbox-${index}`;
+
+                    return (
+                      <TableRow
+                        hover
+                        tabIndex={-1}
+                        key={row.date}
+                      >
+                        <TableCell component='th' scope='row' padding='none'>
+                          {row.date}
+                        </TableCell>
+                        <TableCell align='left'>{row.name}</TableCell>
+                        <TableCell align='right'>{row.ridingTime}</TableCell>
+                        <TableCell align='right'>{row.distance}</TableCell>
+                        <TableCell align='right'>{row.elevation}</TableCell>
+                        <TableCell align='right'>{row.kilojoules}</TableCell>
+                        <TableCell align='right'>{row.np}</TableCell>
+                        <TableCell align='right'>{row.tss}</TableCell>
+                        <TableCell align='right'>{row.averageWatts}</TableCell>
+                        <TableCell align='right'>{row.maxWatts}</TableCell>
+                        <TableCell align='right'>{row.averageHeartrate}</TableCell>
+                        <TableCell align='right'>{row.maxHeartrate}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
             </Table>
           </TableContainer>
         </div>
       );
-
     }
     return (
       <div>
