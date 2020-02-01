@@ -49,30 +49,15 @@ interface HeadCell {
   numeric: boolean;
 }
 
-const headCells: HeadCell[] = [
-  { id: 'date', numeric: false, disablePadding: true, label: 'Date' },
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'ridingTime', numeric: true, disablePadding: false, label: 'Riding Time' },
-  { id: 'distance', numeric: true, disablePadding: false, label: 'Distance' },
-  { id: 'elevation', numeric: true, disablePadding: false, label: 'Elevation' },
-  { id: 'kilojoules', numeric: true, disablePadding: false, label: 'Kilojoules' },
-  { id: 'np', numeric: true, disablePadding: false, label: 'NP' },
-  { id: 'tss', numeric: true, disablePadding: false, label: 'TSS' },
-  { id: 'averageWatts', numeric: true, disablePadding: false, label: 'Average Watts' },
-  { id: 'maxWatts', numeric: true, disablePadding: false, label: 'Max Watts' },
-  { id: 'averageHeartrate', numeric: true, disablePadding: false, label: 'Average Heartrate' },
-  { id: 'maxHeartrate', numeric: true, disablePadding: false, label: 'Max Heartrate' },
-];
+// const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof ActivityData) => {
+//   const isAsc = orderBy === property && order === 'asc';
+//   setOrder(isAsc ? 'desc' : 'asc');
+//   setOrderBy(property);
+// };
 
-const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof ActivityData) => {
-  const isAsc = orderBy === property && order === 'asc';
-  setOrder(isAsc ? 'desc' : 'asc');
-  setOrderBy(property);
-};
-
-const createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
-  onRequestSort(event, property);
-};
+// const createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+//   handleRequestSort(event, property);
+// };
 
 function desc<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -96,7 +81,66 @@ function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+const headCells: HeadCell[] = [
+  { id: 'date', numeric: false, disablePadding: true, label: 'Date' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'ridingTime', numeric: true, disablePadding: false, label: 'Riding Time' },
+  { id: 'distance', numeric: true, disablePadding: false, label: 'Distance' },
+  { id: 'elevation', numeric: true, disablePadding: false, label: 'Elevation' },
+  { id: 'kilojoules', numeric: true, disablePadding: false, label: 'Kilojoules' },
+  { id: 'np', numeric: true, disablePadding: false, label: 'NP' },
+  { id: 'tss', numeric: true, disablePadding: false, label: 'TSS' },
+  { id: 'averageWatts', numeric: true, disablePadding: false, label: 'Average Watts' },
+  { id: 'maxWatts', numeric: true, disablePadding: false, label: 'Max Watts' },
+  { id: 'averageHeartrate', numeric: true, disablePadding: false, label: 'Average Heartrate' },
+  { id: 'maxHeartrate', numeric: true, disablePadding: false, label: 'Max Heartrate' },
+];
 
+interface EnhancedTableProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ActivityData) => void;
+  order: Order;
+  orderBy: string;
+}
+
+class EnhancedTableHead extends React.Component<EnhancedTableProps> {
+
+  createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+    this.props.onRequestSort(event, property);
+  }
+
+  render() {
+
+    const { order, orderBy } = this.props;
+
+    return (
+      <TableHead>
+        <TableRow>
+          {headCells.map((headCell) => (
+          <TableCell
+          key={headCell.id}
+          align={headCell.numeric ? 'right' : 'left'}
+          padding={headCell.disablePadding ? 'none' : 'default'}
+          sortDirection={orderBy === headCell.id ? order : false}
+        >
+          <TableSortLabel
+            active={orderBy === headCell.id}
+            direction={orderBy === headCell.id ? order : 'asc'}
+            onClick={this.createSortHandler(headCell.id)}
+          >
+            {headCell.label}
+            {orderBy === headCell.id ? (
+              <span>
+                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+              </span>
+            ) : null}
+          </TableSortLabel>
+        </TableCell>
+      ))}
+      </TableRow>
+      </TableHead>
+    )
+  }
+}
 
 export interface ActivitiesProps {
   activities: ActivitiesMap;
@@ -109,6 +153,7 @@ export interface ActivitiesComponentProps {
   setOrderBy: keyof ActivityData;
 }
 
+// tslint:disable-next-line: max-classes-per-file
 class Activities extends React.Component<ActivitiesProps, ActivitiesComponentProps> {
 
   constructor(props: ActivitiesProps) {
@@ -292,15 +337,14 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     return activityRows;
   }
 
-  render() {
-
+  flibbetPoo() {
     if (Object.keys(this.props.activities).length > 0) {
 
       // const activityRows = this.buildActivityRows();
 
       const enhancedTable = this.enhancedTable();
       return (
-        {enhancedTable}
+        { enhancedTable }
       );
 
       // return (
@@ -359,11 +403,23 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
   getTableHead(): any {
 
-    const orderBy: string = 'date';
-    const order: Order = 'asc';
+    const orderBy: string = this.state.orderBy;
+    const order: Order = this.state.order;
+
+    // const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    // const { onRequestSort } = props;
+    const createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+      // onRequestSort(event, property);
+      // this.handleRequestSort();
+      console.log('createSortHandler');
+    };
 
     return (
-      <TableHead>
+      <TableHead
+      // order={order}
+      // orderBy={orderBy}
+      // onRequestSort={this.handleRequestSort}
+      >
         <TableRow>
           {headCells.map((headCell) => (
             <TableCell
@@ -391,10 +447,39 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     );
   }
 
+  // handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
+
+  //   const order = this.state.order;
+  //   // const setOrder = this.state.setOrder;
+  //   const orderBy = this.state.orderBy;
+  //   // const setOrderBy = this.state.setOrderBy;
+
+  //   const isAsc = orderBy === property && order === 'asc';
+  //   this.setState({ setOrder: isAsc ? 'desc' : 'asc' });
+  //   this.setState({ setOrderBy: property });
+  // }
+
   enhancedTable(): any {
 
+    return (
+      <div>Pizza</div>
+    );
+  }
+
+  flibbet(): any {
+
+    let order = this.state.order;
+    let setOrder = this.state.setOrder;
+    let orderBy = this.state.orderBy;
+    let setOrderBy = this.state.setOrderBy;
+
+    // const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof ActivityData) => {
+    //   const isAsc = orderBy === property && order === 'asc';
+    //   this.setState( { setOrder: isAsc ? 'desc' : 'asc'});
+    //   this.setState( { setOrderBy: property});
+    // };
+
     const rows: ActivityData[] = [];
-    // const activities: StravatronSummaryActivity[] = [];
 
     const activitiesLUT = this.props.activities;
 
@@ -403,7 +488,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
         const activity = activitiesLUT[activityId];
 
         const row: ActivityData = {
-          date: activity.startDateLocal.toDateString(),
+          date: activity.startDateLocal,
           name: activity.name,
           ridingTime: activity.elapsedTime,
           distance: activity.distance,
@@ -420,8 +505,10 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       }
     }
 
-    const order = this.state.order;
-    const orderBy = this.state.orderBy;
+    order = this.state.order;
+    orderBy = this.state.orderBy;
+    setOrder = this.state.setOrder;
+    setOrderBy = this.state.setOrderBy;
     // const [order, setOrder] = React.useState<Order>('desc');
     // const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
 
@@ -436,13 +523,13 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
           >
             {tableHead}
             <TableBody>
-            {stableSort(rows, getSorting(order, orderBy))
+              {stableSort(rows, getSorting(order, orderBy))
                 .map((row, index) => {
                   return (
                     <TableRow
                       hover
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.date}
                     >
                       <TableCell component='th' scope='row' padding='none'>
                         {row.date}
@@ -464,6 +551,51 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
             </TableBody>
           </Table>
         </TableContainer>
+      </div>
+    );
+  }
+
+  handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
+
+    // const order = this.state.order;
+    // // const setOrder = this.state.setOrder;
+    // const orderBy = this.state.orderBy;
+    // // const setOrderBy = this.state.setOrderBy;
+
+    // const isAsc = orderBy === property && order === 'asc';
+    // this.setState({ setOrder: isAsc ? 'desc' : 'asc' });
+    // this.setState({ setOrderBy: property });
+    console.log('handleRequestSort invoked');
+    console.log('property');
+    console.log(property);
+  }
+
+  render() {
+
+    if (Object.keys(this.props.activities).length > 0) {
+
+      const activityRows = this.buildActivityRows();
+
+      return (
+        <div>
+          <TableContainer>
+            <Table
+              size={'small'}
+            >
+              <EnhancedTableHead
+                order={this.state.order}
+                orderBy={this.state.orderBy}
+                onRequestSort={this.handleRequestSort}
+              />
+            </Table>
+          </TableContainer>
+        </div>
+      );
+
+    }
+    return (
+      <div>
+        Loading...
       </div>
     );
   }

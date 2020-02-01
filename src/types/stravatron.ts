@@ -126,7 +126,7 @@ export interface StravatronSummaryActivity {
   prCount: number;
   resourceState: number;
   startDate: Date;
-  startDateLocal: Date;
+  startDateLocal: string;
   startLatitude: number;
   startLatlng: StravaNativeLatLng;
   startLongitude: number;
