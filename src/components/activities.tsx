@@ -95,7 +95,6 @@ interface EnhancedTableProps {
 class EnhancedTableHead extends React.Component<EnhancedTableProps> {
 
   createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
-    console.log('createSortHandler invoked');
     this.props.onRequestSort(event, property);
   }
 
@@ -167,64 +166,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     hashHistory.push('/detailedActivity/' + activityId.toString());
   }
 
-
-  buildSummaryActivityRow(activity: StravatronActivity): any {
-
-    const self = this;
-
-    let kilojoules = '';
-    if (activity.kilojoules) {
-      kilojoules = activity.kilojoules.toFixed(0);
-    }
-
-    const normalizedPower = isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(1);
-    const tss = isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(1);
-    const averageWatts = isNil(activity.averageWatts) ? 0 : activity.averageWatts;
-
-    return (
-      <tr key={activity.id}>
-        <td>
-          {Converters.getDateTime(activity.startDateLocal)}
-        </td>
-        <td>
-          {activity.name}
-        </td>
-        <td>
-          {Converters.getMovingTime(activity.movingTime)}
-        </td>
-        <td>
-          {Converters.metersToMiles(activity.distance).toFixed(1)} mi
-        </td>
-        <td>
-          {Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft
-        </td>
-        <td>
-          {kilojoules}
-        </td>
-        <td>
-          {normalizedPower}
-        </td>
-        <td>
-          {tss}
-        </td>
-        <td>
-          {averageWatts}
-        </td>
-        <td>
-          {activity.maxWatts}
-        </td>
-        <td>
-          {activity.averageHeartrate}
-        </td>
-        <td>
-          {activity.maxHeartrate}
-        </td>
-        <td>
-          <Button onClick={() => self.handleShowDetailedMap(activity.id)}>Show details</Button>
-        </td>
-      </tr>
-    );
-  }
 
   buildSummaryRow(activity: StravatronActivity): any {
 
@@ -323,202 +264,12 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
     const self = this;
     const activityRows = activities.map((activity) => {
-      const activityRow = self.buildSummaryRow(activity);
-      return activityRow;
+      // const activityRow = self.buildSummaryRow(activity);
+      // return activityRow;
+      return activity;
     });
     return activityRows;
   }
-
-  flibbetPoo() {
-    if (Object.keys(this.props.activities).length > 0) {
-
-      // const activityRows = this.buildActivityRows();
-
-      // const enhancedTable = this.enhancedTable();
-      // return (
-      //   { enhancedTable }
-      // );
-
-      // return (
-      //   <div id='SummaryActivities'>
-      //     <br />
-
-      //     <TableContainer>
-      //       <Table style={{ width: '1597px' }}>
-      //         <TableHead>
-      //           <TableRow>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Date</TableCell>
-      //             <TableCell style={{ width: '192px' }}>Name</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Riding Time</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Distance</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Elevation</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Kilojoules</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>NP</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>TSS</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Watts</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Watts</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Heartrate</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Heartrate</TableCell>
-      //             <TableCell style={{ width: '64px', whiteSpace: 'normal' }}></TableCell>
-      //           </TableRow>
-      //         </TableHead>
-      //         <TableBody>
-      //           {activityRows}
-      //         </TableBody>
-      //       </Table>
-      //     </TableContainer>
-      //   </div>
-      // );
-    }
-    return (
-      <div>
-        Loading...
-      </div>
-    );
-  }
-
-  /*
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Date</TableCell>
-          <TableCell style={{ width: '192px' }}>Name</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Riding Time</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Distance</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Elevation</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Kilojoules</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>NP</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>TSS</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Watts</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Watts</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Average Heartrate</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}>Max Heartrate</TableCell>
-          <TableCell style={{ width: '64px', whiteSpace: 'normal' }}></TableCell>
-  */
-
-  getTableHead(): any {
-
-    const orderBy: string = this.state.orderBy;
-    const order: Order = this.state.order;
-
-    // const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-    // const { onRequestSort } = props;
-    const createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
-      // onRequestSort(event, property);
-      // this.handleRequestSort();
-      console.log('createSortHandler');
-    };
-
-    return (
-      <TableHead
-      // order={order}
-      // orderBy={orderBy}
-      // onRequestSort={this.handleRequestSort}
-      >
-        <TableRow>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'default'}
-              sortDirection={orderBy === headCell.id ? order : false}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <span>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </span>
-                ) : null}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
-
-  flibbet(): any {
-
-    let order = this.state.order;
-    let orderBy = this.state.orderBy;
-
-    const rows: ActivityData[] = [];
-
-    const activitiesLUT = this.props.activities;
-
-    for (const activityId in activitiesLUT) {
-      if (activitiesLUT.hasOwnProperty(activityId)) {
-        const activity = activitiesLUT[activityId];
-
-        const row: ActivityData = {
-          date: activity.startDateLocal,
-          name: activity.name,
-          ridingTime: activity.elapsedTime,
-          distance: activity.distance,
-          elevation: activity.totalElevationGain,
-          kilojoules: activity.kilojoules,
-          np: 0,
-          tss: 0,
-          averageWatts: 0,
-          maxWatts: 0,
-          averageHeartrate: 0,
-          maxHeartrate: 0,
-        };
-        rows.push(row);
-      }
-    }
-
-    order = this.state.order;
-    orderBy = this.state.orderBy;
-
-    const tableHead = this.getTableHead();
-    return (
-      <div id='SummaryActivities'>
-        <br />
-        <TableContainer>
-          <Table
-            style={{ width: '1597px' }}
-            size={'medium'}
-          >
-            {tableHead}
-            <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
-                .map((row, index) => {
-                  return (
-                    <TableRow
-                      hover
-                      tabIndex={-1}
-                      key={row.date}
-                    >
-                      <TableCell component='th' scope='row' padding='none'>
-                        {row.date}
-                      </TableCell>
-                      <TableCell align='left'>{row.name}</TableCell>
-                      <TableCell align='right'>{row.ridingTime}</TableCell>
-                      <TableCell align='right'>{row.distance}</TableCell>
-                      <TableCell align='right'>{row.elevation}</TableCell>
-                      <TableCell align='right'>{row.kilojoules}</TableCell>
-                      <TableCell align='right'>{row.np}</TableCell>
-                      <TableCell align='right'>{row.tss}</TableCell>
-                      <TableCell align='right'>{row.averageWatts}</TableCell>
-                      <TableCell align='right'>{row.maxWatts}</TableCell>
-                      <TableCell align='right'>{row.averageHeartrate}</TableCell>
-                      <TableCell align='right'>{row.maxHeartrate}</TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    );
-  }
-
-
-
-
 
   handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
     const orderBy = this.state.orderBy;
@@ -530,10 +281,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     this.setState({
       orderBy: property
     });
-
-    console.log('handleRequestSort');
-    console.log('order: ', this.state.order);
-    console.log('orderBy: ', this.state.orderBy);
   }
 
   render() {
@@ -561,6 +308,9 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
                   .slice(0, 0 + 12)
                   .map((row, index) => {
                     const labelId = `enhanced-table-checkbox-${index}`;
+
+                    console.log('render row: ');
+                    console.log(row);
 
                     return (
                       <TableRow
