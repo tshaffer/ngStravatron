@@ -222,7 +222,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
       return (
         <div>
-          <TableContainer>
+          <TableContainer style={{ maxHeight: 800 }}>
             <Table 
               stickyHeader
               size={'small'}
@@ -236,8 +236,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
                 {stableSort(rows, getSorting(order, orderBy))
                 .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
                 .map((activity: StravatronActivity, index) => {
-                    const labelId = `enhanced-table-checkbox-${index}`;
-
                     return (
                       <TableRow
                         hover
