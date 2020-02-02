@@ -15,6 +15,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { TablePagination } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 
 import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '../types';
 import { getActivities } from '../selectors';
@@ -216,55 +217,57 @@ const Activities = (props: ActivitiesProps) => {
 
     return (
       <div className={classes.root}>
-        <TableContainer style={{ maxHeight: 800 }}>
-          <Table
-            stickyHeader
-            size={'small'}
-          >
-            <ActivitiesTableHeader
-              classes={classes}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
-            <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                // .map((activity: StravatronActivity) => {
-                .map((activity: any) => {
-                  return (
-                    <TableRow
-                      hover
-                      tabIndex={-1}
-                      key={activity.startDateLocal}
-                    >
-                      <TableCell align='left'>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
-                      <TableCell align='left'>{activity.name}</TableCell>
-                      <TableCell align='right'>{Converters.getMovingTime(activity.movingTime)}</TableCell>
-                      <TableCell align='right'>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
-                      <TableCell align='right'>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
-                      <TableCell align='right'>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
-                      <TableCell align='right'>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
-                      <TableCell align='right'>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
-                      <TableCell align='right'>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
-                      <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
-                      <TableCell align='right'>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
-                      <TableCell align='right'>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component='div'
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        <Paper className={classes.paper}>
+          <TableContainer style={{ maxHeight: 800 }}>
+            <Table
+              stickyHeader
+              size={'small'}
+            >
+              <ActivitiesTableHeader
+                classes={classes}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+              />
+              <TableBody>
+                {stableSort(rows, getSorting(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  // .map((activity: StravatronActivity) => {
+                  .map((activity: any) => {
+                    return (
+                      <TableRow
+                        hover
+                        tabIndex={-1}
+                        key={activity.startDateLocal}
+                      >
+                        <TableCell align='left'>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
+                        <TableCell align='left'>{activity.name}</TableCell>
+                        <TableCell align='right'>{Converters.getMovingTime(activity.movingTime)}</TableCell>
+                        <TableCell align='right'>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
+                        <TableCell align='right'>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
+                        <TableCell align='right'>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
+                        <TableCell align='right'>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component='div'
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
       </div>
     );
   }
