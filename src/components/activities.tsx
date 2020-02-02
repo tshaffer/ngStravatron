@@ -249,9 +249,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
                         tabIndex={-1}
                         key={activity.startDateLocal}
                       >
-                        <TableCell component='th' scope='row' padding='none'>
-                          {Converters.getDateTime(activity.startDateLocal)}
-                        </TableCell>
+                        <TableCell align='left'>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
                         <TableCell align='left'>{activity.name}</TableCell>
                         <TableCell align='right'>{Converters.getMovingTime(activity.movingTime)}</TableCell>
                         <TableCell align='right'>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
