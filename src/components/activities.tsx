@@ -328,32 +328,32 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               <TableBody>
                 {stableSort(rows, getSorting(order, orderBy))
                   .slice(0, 0 + 12)
-                  .map((row, index) => {
+                  .map((activity: StravatronActivity, index) => {
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     console.log('render row: ');
-                    console.log(row);
+                    console.log(activity);
 
                     return (
                       <TableRow
                         hover
                         tabIndex={-1}
-                        key={row.date}
+                        key={activity.startDateLocal}
                       >
                         <TableCell component='th' scope='row' padding='none'>
-                          {row.date}
+                          {Converters.getDateTime(activity.startDateLocal)}
                         </TableCell>
-                        <TableCell align='left'>{row.name}</TableCell>
-                        <TableCell align='right'>{row.ridingTime}</TableCell>
-                        <TableCell align='right'>{row.distance}</TableCell>
-                        <TableCell align='right'>{row.elevation}</TableCell>
-                        <TableCell align='right'>{row.kilojoules}</TableCell>
-                        <TableCell align='right'>{row.np}</TableCell>
-                        <TableCell align='right'>{row.tss}</TableCell>
-                        <TableCell align='right'>{row.averageWatts}</TableCell>
-                        <TableCell align='right'>{row.maxWatts}</TableCell>
-                        <TableCell align='right'>{row.averageHeartrate}</TableCell>
-                        <TableCell align='right'>{row.maxHeartrate}</TableCell>
+                        <TableCell align='left'>{activity.name}</TableCell>
+                        <TableCell align='right'>{Converters.getMovingTime(activity.movingTime)}</TableCell>
+                        <TableCell align='right'>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
+                        <TableCell align='right'>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
+                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
+                        <TableCell align='right'>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxHeartrate}</TableCell>
                       </TableRow>
                     );
                   })}
