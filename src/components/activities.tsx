@@ -191,8 +191,9 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
   }
 
   handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
-    const orderBy = this.state.orderBy;
-    const order = this.state.order;
+
+    const { order, orderBy } = this.state;
+
     const isAsc = orderBy === property && order === 'asc';
     this.setState({
       order: isAsc ? 'desc' : 'asc'
@@ -211,6 +212,38 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     this.setState( { page: 0 });
   }
 
+  createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+    this.handleRequestSort(null, property);
+  }
+
+  getEnhancedTableHead() {
+
+    const { order, orderBy } = this.state;
+
+    return (
+      <TableHead>
+        <TableRow>
+          {activityColumnCells.map((headCell) => (
+            <TableCell
+              key={headCell.id}
+              align={headCell.numeric ? 'right' : 'left'}
+              padding={headCell.disablePadding ? 'none' : 'default'}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={this.createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+    );
+  }
+
   render() {
 
     if (Object.keys(this.props.activities).length > 0) {
@@ -220,6 +253,16 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       const order = this.state.order;
       const orderBy = this.state.orderBy;
 
+      const enhancedTableHead = this.getEnhancedTableHead();
+
+      /*
+              <EnhancedTableHead
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={this.handleRequestSort}
+              />
+      */
+
       return (
         <div>
           <TableContainer style={{ maxHeight: 800 }}>
@@ -227,11 +270,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               stickyHeader
               size={'small'}
             >
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={this.handleRequestSort}
-              />
+              {enhancedTableHead}
               <TableBody>
                 {stableSort(rows, getSorting(order, orderBy))
                 .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
