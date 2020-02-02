@@ -19,13 +19,6 @@ import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '..
 import { getActivities } from '../selectors';
 import * as Converters from '../utilities/converters';
 
-function getSorting<K extends keyof any>(
-  order: Order,
-  orderBy: K,
-): (a: { [key in K]: number | string }, b: { [key in K]: number | string }) => number {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
-
 type Order = 'asc' | 'desc';
 interface ActivityData {
   date: string;
@@ -49,6 +42,21 @@ interface HeadCell {
   numeric: boolean;
 }
 
+const activityColumnCells: HeadCell[] = [
+  { id: 'date', numeric: false, disablePadding: true, label: 'Date' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'movingTime', numeric: true, disablePadding: false, label: 'Riding Time' },
+  { id: 'distance', numeric: true, disablePadding: false, label: 'Distance' },
+  { id: 'totalElevationGain', numeric: true, disablePadding: false, label: 'Elevation' },
+  { id: 'kilojoules', numeric: true, disablePadding: false, label: 'Kilojoules' },
+  { id: 'normalizedPower', numeric: true, disablePadding: false, label: 'NP' },
+  { id: 'trainingStressScore', numeric: true, disablePadding: false, label: 'TSS' },
+  { id: 'averageWatts', numeric: true, disablePadding: false, label: 'Average Watts' },
+  { id: 'maxWatts', numeric: true, disablePadding: false, label: 'Max Watts' },
+  { id: 'averageHeartrate', numeric: true, disablePadding: false, label: 'Average Heartrate' },
+  { id: 'maxHeartrate', numeric: true, disablePadding: false, label: 'Max Heartrate' },
+];
+
 function desc<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -71,60 +79,11 @@ function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const activityColumnCells: HeadCell[] = [
-  { id: 'date', numeric: false, disablePadding: true, label: 'Date' },
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'movingTime', numeric: true, disablePadding: false, label: 'Riding Time' },
-  { id: 'distance', numeric: true, disablePadding: false, label: 'Distance' },
-  { id: 'totalElevationGain', numeric: true, disablePadding: false, label: 'Elevation' },
-  { id: 'kilojoules', numeric: true, disablePadding: false, label: 'Kilojoules' },
-  { id: 'normalizedPower', numeric: true, disablePadding: false, label: 'NP' },
-  { id: 'trainingStressScore', numeric: true, disablePadding: false, label: 'TSS' },
-  { id: 'averageWatts', numeric: true, disablePadding: false, label: 'Average Watts' },
-  { id: 'maxWatts', numeric: true, disablePadding: false, label: 'Max Watts' },
-  { id: 'averageHeartrate', numeric: true, disablePadding: false, label: 'Average Heartrate' },
-  { id: 'maxHeartrate', numeric: true, disablePadding: false, label: 'Max Heartrate' },
-];
-
-interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ActivityData) => void;
-  order: Order;
-  orderBy: string;
-}
-
-class EnhancedTableHead extends React.Component<EnhancedTableProps> {
-
-  createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
-    this.props.onRequestSort(event, property);
-  }
-
-  render() {
-
-    const { order, orderBy } = this.props;
-
-    return (
-      <TableHead>
-        <TableRow>
-          {activityColumnCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'default'}
-              sortDirection={orderBy === headCell.id ? order : false}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={this.createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
+function getSorting<K extends keyof any>(
+  order: Order,
+  orderBy: K,
+): (a: { [key in K]: number | string }, b: { [key in K]: number | string }) => number {
+  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
 export interface ActivitiesProps {
@@ -138,7 +97,6 @@ export interface ActivitiesComponentProps {
   rowsPerPage: number;
 }
 
-// tslint:disable-next-line: max-classes-per-file
 class Activities extends React.Component<ActivitiesProps, ActivitiesComponentProps> {
 
   constructor(props: ActivitiesProps) {
@@ -148,7 +106,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       order: 'asc',
       orderBy: 'date',
       page: 0,
-      rowsPerPage: 5,
+      rowsPerPage: 10,
     };
 
     this.handleRequestSort = this.handleRequestSort.bind(this);
@@ -255,14 +213,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
       const enhancedTableHead = this.getEnhancedTableHead();
 
-      /*
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={this.handleRequestSort}
-              />
-      */
-
       return (
         <div>
           <TableContainer style={{ maxHeight: 800 }}>
@@ -274,7 +224,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               <TableBody>
                 {stableSort(rows, getSorting(order, orderBy))
                 .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
-                .map((activity: StravatronActivity, index) => {
+                .map((activity: StravatronActivity) => {
                     return (
                       <TableRow
                         hover
