@@ -137,6 +137,12 @@ const useStyles = makeStyles((theme: Theme) =>
     table: {
       minWidth: 750,
     },
+    tableColumnMediumWidth: {
+      width: '64px',
+    },
+    tableColumnWideWidth: {
+      width: '192px',
+    }
   }),
 );
 
@@ -229,18 +235,18 @@ const Activities = (props: ActivitiesProps) => {
                         tabIndex={-1}
                         key={activity.startDateLocal}
                       >
-                        <TableCell align='left' style={{ width: '64px' }}>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
-                        <TableCell align='left' style={{ width: '192px' }}>{activity.name}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{Converters.getMovingTime(activity.movingTime)}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
-                        <TableCell align='right' style={{ width: '64px' }}>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
+                        <TableCell align='left' className={classes.tableColumnMediumWidth}>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
+                        <TableCell align='left' className={classes.tableColumnWideWidth}>{activity.name}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.getMovingTime(activity.movingTime)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
                       </TableRow>
                     );
                   })}
