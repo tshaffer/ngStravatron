@@ -228,7 +228,8 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       return (
         <div>
           <TableContainer>
-            <Table
+            <Table 
+              stickyHeader
               size={'small'}
             >
               <EnhancedTableHead
