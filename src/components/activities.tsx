@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import { createHashHistory } from 'history';
 
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -87,6 +88,7 @@ function getSorting<K extends keyof any>(
 }
 
 interface ActivitiesTableHeaderProps {
+  classes: ReturnType<typeof useStyles>;
   order: Order;
   orderBy: string;
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ActivityData) => void;
@@ -122,11 +124,38 @@ const ActivitiesTableHeader = (props: ActivitiesTableHeaderProps) => {
   );
 };
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
+    },
+    paper: {
+      width: '100%',
+      marginBottom: theme.spacing(2),
+    },
+    table: {
+      minWidth: 750,
+    },
+    visuallyHidden: {
+      border: 0,
+      clip: 'rect(0 0 0 0)',
+      height: 1,
+      margin: -1,
+      overflow: 'hidden',
+      padding: 0,
+      position: 'absolute',
+      top: 20,
+      width: 1,
+    },
+  }),
+);
+
 export interface ActivitiesProps {
   activities: ActivitiesMap;
 }
 
 const Activities = (props: ActivitiesProps) => {
+  const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
   const [page, setPage] = React.useState(0);
@@ -186,13 +215,14 @@ const Activities = (props: ActivitiesProps) => {
     const rows = getActivityRows();
 
     return (
-      <div>
+      <div className={classes.root}>
         <TableContainer style={{ maxHeight: 800 }}>
           <Table
             stickyHeader
             size={'small'}
           >
             <ActivitiesTableHeader
+              classes={classes}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
