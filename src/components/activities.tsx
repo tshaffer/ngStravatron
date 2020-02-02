@@ -13,7 +13,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Button from '@material-ui/core/Button';
+import { TablePagination } from '@material-ui/core';
 
 import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '../types';
 import { getActivities } from '../selectors';
@@ -139,6 +139,8 @@ export interface ActivitiesProps {
 export interface ActivitiesComponentProps {
   order: Order;
   orderBy: keyof ActivityData;
+  page: number;
+  rowsPerPage: number;
 }
 
 // tslint:disable-next-line: max-classes-per-file
@@ -150,9 +152,13 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     this.state = {
       order: 'asc',
       orderBy: 'date',
+      page: 0,
+      rowsPerPage: 5,
     };
 
     this.handleRequestSort = this.handleRequestSort.bind(this);
+    this.handleChangePage = this.handleChangePage.bind(this);
+    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
   }
 
   getActivityRows(): any[] {
@@ -201,6 +207,15 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     });
   }
 
+  handleChangePage(event: unknown, newPage: number) {
+    this.setState({ page: newPage });
+  }
+
+  handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
+    this.setState( { rowsPerPage: (parseInt(event.target.value, 10)) });
+    this.setState( { page: 0 });
+  }
+
   render() {
 
     if (Object.keys(this.props.activities).length > 0) {
@@ -223,8 +238,8 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               />
               <TableBody>
                 {stableSort(rows, getSorting(order, orderBy))
-                  .slice(0, 0 + 42)
-                  .map((activity: StravatronActivity, index) => {
+                .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
+                .map((activity: StravatronActivity, index) => {
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
@@ -253,6 +268,15 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component='div'
+            count={rows.length}
+            rowsPerPage={this.state.rowsPerPage}
+            page={this.state.page}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
         </div>
       );
     }
