@@ -1,7 +1,6 @@
 import { isNil } from 'lodash';
 
 import * as React from 'react';
-import { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -87,6 +86,42 @@ function getSorting<K extends keyof any>(
   return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
+interface ActivitiesTableHeaderProps {
+  order: Order;
+  orderBy: string;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ActivityData) => void;
+}
+
+const ActivitiesTableHeader = (props: ActivitiesTableHeaderProps) => {
+  const { order, orderBy, onRequestSort } = props;
+  const createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+    onRequestSort(event, property);
+  };
+
+  return (
+    <TableHead>
+      <TableRow>
+        {activityColumnCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'default'}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead >
+  );
+};
+
 export interface ActivitiesProps {
   activities: ActivitiesMap;
 }
@@ -140,43 +175,15 @@ const Activities = (props: ActivitiesProps) => {
     setPage(0);
   };
 
-  const handleRequestSort = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof ActivityData) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const getEnhancedTableHead = () => {
-
-    return (
-      <TableHead>
-        <TableRow>
-          {activityColumnCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
-              padding={headCell.disablePadding ? 'none' : 'default'}
-              sortDirection={orderBy === headCell.id ? order : false}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={handleRequestSort(headCell.id)}
-              >
-                {headCell.label}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead >
-    );
-  };
-
   if (Object.keys(props.activities).length > 0) {
 
     const rows = getActivityRows();
-
-    const enhancedTableHead = getEnhancedTableHead();
 
     return (
       <div>
@@ -185,7 +192,11 @@ const Activities = (props: ActivitiesProps) => {
             stickyHeader
             size={'small'}
           >
-            {enhancedTableHead}
+            <ActivitiesTableHeader
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+            />
             <TableBody>
               {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
