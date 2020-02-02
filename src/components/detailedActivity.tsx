@@ -34,6 +34,90 @@ import {
   getEffortsForActivitySegments
 } from '../selectors/detailedActivity';
 import moment = require('moment');
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+
+type Order = 'asc' | 'desc';
+interface DetailedActivityData {
+  name: string;
+  movingTime: number;
+  distance: number;
+  speed: number;
+  averageGrade: number;
+  totalElevationGain: number;
+  normalizedPower: number;
+  averageWatts: number;
+  averageHeartrate: number;
+  maxHeartrate: number;
+}
+
+interface HeadCell {
+  id: keyof DetailedActivityData;
+  label: string;
+  numeric: boolean;
+  width: string;
+}
+
+const activityColumnCells: HeadCell[] = [
+  { id: 'name', numeric: false, label: 'Name', width: '192px' },
+  { id: 'movingTime', numeric: true, label: 'Riding Time', width: '64px' },
+  { id: 'distance', numeric: true, label: 'Distance', width: '64px' },
+  { id: 'speed', numeric: true, label: 'Speed', width: '64px' },
+  { id: 'totalElevationGain', numeric: true, label: 'Elevation', width: '64px' },
+  { id: 'normalizedPower', numeric: true, label: 'NP', width: '64px' },
+  { id: 'averageWatts', numeric: true, label: 'Average Watts', width: '64px' },
+  { id: 'averageHeartrate', numeric: true, label: 'Average Heartrate', width: '64px' },
+  { id: 'maxHeartrate', numeric: true, label: 'Max Heartrate', width: '64px' },
+];
+
+function desc<T>(a: T, b: T, orderBy: keyof T) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
+  const stabilized = array.map((el, index) => [el, index] as [T, number]);
+  stabilized.sort((a, b) => {
+    const order = cmp(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilized.map((el) => el[0]);
+}
+
+function getSorting<K extends keyof any>(
+  order: Order,
+  orderBy: K,
+): (a: { [key in K]: number | string }, b: { [key in K]: number | string }) => number {
+  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+}
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
+    },
+    paper: {
+      width: '100%',
+      marginBottom: theme.spacing(2),
+    },
+    table: {
+      minWidth: 750,
+    },
+    tableColumnMediumWidth: {
+      width: '64px',
+    },
+    tableColumnWideWidth: {
+      width: '192px',
+    }
+  }),
+);
 
 export interface DetailedActivityProps {
   activityId: number;
@@ -44,32 +128,36 @@ export interface DetailedActivityProps {
   onLoadDetailedActivity: (activityId: number) => any;
   onForceReloadEfforts: (activityId: number) => any;
   onGetMmpData: (activityId: number) => any;
+  classes: ReturnType<typeof useStyles>;
+  order: Order;
+  orderBy: string;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof DetailedActivityData) => void;
 }
 
-class DetailedActivity extends React.Component<DetailedActivityProps> {
+const DetailedActivity = (props: DetailedActivityProps) => {
+  const classes = useStyles();
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof DetailedActivityData>('name');
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  constructor(props: DetailedActivityProps) {
-    super(props);
+  const { onLoadDetailedActivity, onForceReloadEfforts, onGetMmpData, effortsForSegments, segmentsMap, segmentEfforts } = props;
 
-    this.handleFetchEfforts = this.handleFetchEfforts.bind(this);
-    this.handleGetMmpData = this.handleGetMmpData.bind(this);
-  }
+  React.useEffect(() => {
+    onLoadDetailedActivity(props.activityId);
+  });
 
-  componentWillMount() {
-    this.props.onLoadDetailedActivity(this.props.activityId);
-  }
-
-  handleFetchEfforts(activityId: number) {
+  const handleFetchEfforts = (activityId: number) => {
     console.log('handleFetchEfforts: ', activityId);
-    this.props.onForceReloadEfforts(activityId);
-  }
+    onForceReloadEfforts(activityId);
+  };
 
-  handleGetMmpData(activityId: number) {
+  const handleGetMmpData = (activityId: number) => {
     console.log('handleGetMmpData: ', activityId);
-    this.props.onGetMmpData(activityId);
-  }
+    onGetMmpData(activityId);
+  };
 
-  buildRideSummaryHeader(detailedActivity: StravatronActivity) {
+  const buildRideSummaryHeader = (detailedActivity: StravatronActivity) => {
 
     if (isNil(detailedActivity)) {
       return <div>Loading</div>;
@@ -125,9 +213,9 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
         </TableContainer>
       </div >
     );
-  }
+  };
 
-  analyzeEffortsForSegment(effortsForSegment: StravatronSegmentEffort[]): any {
+  const analyzeEffortsForSegment = (effortsForSegment: StravatronSegmentEffort[]): any => {
 
     const effortsSortedByMovingTime: StravatronSegmentEffort[] = effortsForSegment.concat();
     const effortsSortedByDate: StravatronSegmentEffort[] = effortsForSegment.concat();
@@ -169,10 +257,10 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
     };
 
     return analyzedEffortsForSegment;
-  }
+  };
 
   // TEDTODO - come up with a better name - it's not just recent efforts
-  buildRecentEfforts(segmentId: number): any {
+  const buildRecentEfforts = (segmentId: number): any => {
 
     // if (segmentId === 18385727) {
     //   debugger;
@@ -181,11 +269,11 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
     let recentEffortsLbl: any;
     let effortsForSegmentLbl: any;
 
-    if (!isNil(this.props.effortsForSegments)) {
-      const effortsForSegments: StravatronSegmentEffortsBySegment = this.props.effortsForSegments;
-      if (effortsForSegments.hasOwnProperty(segmentId)) {
-        const effortsForSegment: StravatronSegmentEffort[] = effortsForSegments[segmentId];
-        const effortData = this.analyzeEffortsForSegment(effortsForSegment);
+    if (!isNil(effortsForSegments)) {
+      const stravatronEffortsForSegments: StravatronSegmentEffortsBySegment = effortsForSegments;
+      if (stravatronEffortsForSegments.hasOwnProperty(segmentId)) {
+        const effortsForSegment: StravatronSegmentEffort[] = stravatronEffortsForSegments[segmentId];
+        const effortData = analyzeEffortsForSegment(effortsForSegment);
 
         const bestEffortTime = Converters.getMovingTime(effortData.effortsSortedByMovingTime[0].movingTime);
         const bestEffortDate = moment(effortData.effortsSortedByMovingTime[0].startDateLocal).format('YYYY-MM-DD');
@@ -262,14 +350,14 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
       }
     }
     return { recentEffortsLbl, effortsForSegmentLbl };
-  }
+  };
 
-  buildSegmentEffortRow(segmentEffort: StravatronSegmentEffort) {
+  const buildSegmentEffortRow = (segmentEffort: StravatronSegmentEffort) => {
 
     // TEDTODO - id confusion
     const segmentId = segmentEffort.segmentId;
     // const segment: Segment = this.props.segmentsMap[segmentId];
-    const segment: StravatronDetailedSegment = this.props.segmentsMap[segmentId];
+    const segment: StravatronDetailedSegment = segmentsMap[segmentId];
     const speed = segmentEffort.distance / segmentEffort.movingTime;
 
     let averageGrade = '';
@@ -282,7 +370,7 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
       totalElevationGain = Converters.metersToFeet(segment.totalElevationGain).toFixed(0) + 'ft';
     }
 
-    const effortsData = this.buildRecentEfforts(segmentId);
+    const effortsData = buildRecentEfforts(segmentId);
     const { recentEffortsLbl, effortsForSegmentLbl } = effortsData;
     /*
         <td>
@@ -339,13 +427,11 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
         </TableCell>
       </TableRow>
     );
-  }
+  };
 
-  buildSegmentEffortRows(segmentEfforts: StravatronSegmentEffort[]) {
+  const buildSegmentEffortRows = (allSegmentEfforts: StravatronSegmentEffort[]) => {
 
-    const self = this;
-
-    const sortedSegmentEffortRows: StravatronSegmentEffort[] = segmentEfforts.concat();
+    const sortedSegmentEffortRows: StravatronSegmentEffort[] = allSegmentEfforts.concat();
     sortedSegmentEffortRows.sort((a, b) => {
       const aStartTime = a.startDate;
       const bStartTime = b.startDate;
@@ -360,17 +446,17 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
     });
 
     const segmentEffortRows = sortedSegmentEffortRows.map((segmentEffort) => {
-      const segmentEffortRow = self.buildSegmentEffortRow(segmentEffort);
+      const segmentEffortRow = buildSegmentEffortRow(segmentEffort);
       return segmentEffortRow;
     });
     return segmentEffortRows;
-  }
+  };
 
-  buildSegmentEffortsTable() {
+  const buildSegmentEffortsTable = () => {
 
-    console.log(this.props.segmentEfforts);
+    console.log(segmentEfforts);
 
-    const segmentEffortRows = this.buildSegmentEffortRows(this.props.segmentEfforts);
+    const segmentEffortRows = buildSegmentEffortRows(segmentEfforts);
 
     return (
       <div>
@@ -398,55 +484,52 @@ class DetailedActivity extends React.Component<DetailedActivityProps> {
         </Table>
       </div>
     );
+  };
+
+  const activity = props.detailedActivity;
+
+  console.log('detailedActivityAttributes');
+  console.log(activity);
+
+  console.log('segmentEfforts');
+  console.log(segmentEfforts);
+
+  if (isNil(activity)) {
+    return <div>Loading...</div>;
   }
 
-  render(): any {
+  const rideSummaryHeader = buildRideSummaryHeader(activity);
+  const segmentEffortsTable = buildSegmentEffortsTable();
+  // return (
+  //   <div>
+  //     <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
+  //     <br />
+  //     {rideSummaryHeader}
+  //     <button onClick={() => this.handleFetchEfforts(activity.id)}>Refresh efforts</button>
+  //     <br />
+  //     {segmentEffortsTable}
+  //   </div>
+  // );
 
-    const activity = this.props.detailedActivity;
-
-    console.log('detailedActivityAttributes');
-    console.log(activity);
-
-    console.log('segmentEfforts');
-    console.log(this.props.segmentEfforts);
-
-    if (isNil(activity)) {
-      return <div>Loading...</div>;
-    }
-
-    const rideSummaryHeader = this.buildRideSummaryHeader(activity);
-    const segmentEffortsTable = this.buildSegmentEffortsTable();
-    // return (
-    //   <div>
-    //     <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
-    //     <br />
-    //     {rideSummaryHeader}
-    //     <button onClick={() => this.handleFetchEfforts(activity.id)}>Refresh efforts</button>
-    //     <br />
-    //     {segmentEffortsTable}
-    //   </div>
-    // );
-
-    // <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
-    return (
-      <div>
-        <Link to='/'>Home</Link>
-        <br />
-        <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
-        <br />
-        {rideSummaryHeader}
-        <br />
-        <button onClick={() => this.handleFetchEfforts(activity.id)}>Refresh efforts</button>
-        <br />
-        <button onClick={() => this.handleGetMmpData(activity.id)}>Get MMP Data</button>
-        <br />
-        <br />
-        <br />
-        {segmentEffortsTable}
-      </div>
-    );
-  }
-}
+  // <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
+  return (
+    <div>
+      <Link to='/'>Home</Link>
+      <br />
+      <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
+      <br />
+      {rideSummaryHeader}
+      <br />
+      <button onClick={() => handleFetchEfforts(activity.id)}>Refresh efforts</button>
+      <br />
+      <button onClick={() => handleGetMmpData(activity.id)}>Get MMP Data</button>
+      <br />
+      <br />
+      <br />
+      {segmentEffortsTable}
+    </div>
+  );
+};
 
 function mapStateToProps(state: any, ownProps: any) {
 
