@@ -71,7 +71,7 @@ function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const headCells: HeadCell[] = [
+const activityColumnCells: HeadCell[] = [
   { id: 'date', numeric: false, disablePadding: true, label: 'Date' },
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'ridingTime', numeric: true, disablePadding: false, label: 'Riding Time' },
@@ -102,14 +102,10 @@ class EnhancedTableHead extends React.Component<EnhancedTableProps> {
 
     const { order, orderBy } = this.props;
 
-    console.log('EnhancedTableHead:');
-    console.log('order: ', order);
-    console.log('orderBy: ', orderBy);
-
     return (
       <TableHead>
         <TableRow>
-          {headCells.map((headCell) => (
+          {activityColumnCells.map((headCell) => (
             <TableCell
               key={headCell.id}
               align={headCell.numeric ? 'right' : 'left'}
@@ -234,30 +230,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     );
   }
 
-  getPrintableActivity(activity: StravatronActivity): any {
-    
-    const printableActivity: any = {};
-
-    printableActivity.kilojoules = '';
-    if (activity.kilojoules) {
-      printableActivity.kilojoules = activity.kilojoules.toFixed(0);
-    }
-
-    printableActivity.date = Converters.getDateTime(activity.startDateLocal);
-    printableActivity.name = activity.name;
-    printableActivity.ridingTime = Converters.getMovingTime(activity.movingTime);
-    printableActivity.distance = Converters.metersToMiles(activity.distance).toFixed(1) + ' mi';
-    printableActivity.elevation = Converters.metersToFeet(activity.totalElevationGain).toFixed(0) + ' ft';
-    printableActivity.np = isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(1);
-    printableActivity.tss = isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(1);
-    printableActivity.averageWatts = isNil(activity.averageWatts) ? 0 : activity.averageWatts;
-    printableActivity.maxWatts = activity.maxWatts;
-    printableActivity.averageHeartrate = activity.averageHeartrate;
-    printableActivity.maxHeartrate = activity.maxHeartrate;
-  
-    return printableActivity;
-  }
-
   getActivityRows(): any[] {
 
     const activities: StravatronSummaryActivity[] = [];
@@ -288,7 +260,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
 
     const activityRows = activities.map((activity) => {
       return activity;
-      // return this.getPrintableActivity(activity);
     });
     return activityRows;
   }
@@ -327,12 +298,9 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               />
               <TableBody>
                 {stableSort(rows, getSorting(order, orderBy))
-                  .slice(0, 0 + 12)
+                  .slice(0, 0 + 42)
                   .map((activity: StravatronActivity, index) => {
                     const labelId = `enhanced-table-checkbox-${index}`;
-
-                    console.log('render row: ');
-                    console.log(activity);
 
                     return (
                       <TableRow
