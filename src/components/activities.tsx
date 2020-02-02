@@ -1,6 +1,7 @@
 import { isNil } from 'lodash';
 
 import * as React from 'react';
+import { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -68,15 +69,15 @@ function desc<T>(a: T, b: T, orderBy: keyof T) {
 }
 
 function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
+  const stabilized = array.map((el, index) => [el, index] as [T, number]);
+  stabilized.sort((a, b) => {
     const order = cmp(a[0], b[0]);
     if (order !== 0) {
       return order;
     }
     return a[1] - b[1];
   });
-  return stabilizedThis.map((el) => el[0]);
+  return stabilized.map((el) => el[0]);
 }
 
 function getSorting<K extends keyof any>(
@@ -90,35 +91,17 @@ export interface ActivitiesProps {
   activities: ActivitiesMap;
 }
 
-export interface ActivitiesComponentProps {
-  order: Order;
-  orderBy: keyof ActivityData;
-  page: number;
-  rowsPerPage: number;
-}
+const Activities = (props: ActivitiesProps) => {
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-class Activities extends React.Component<ActivitiesProps, ActivitiesComponentProps> {
-
-  constructor(props: ActivitiesProps) {
-    super(props);
-
-    this.state = {
-      order: 'asc',
-      orderBy: 'date',
-      page: 0,
-      rowsPerPage: 10,
-    };
-
-    this.handleRequestSort = this.handleRequestSort.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
-    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
-  }
-
-  getActivityRows(): any[] {
+  const getActivityRows = (): any[] => {
 
     const activities: StravatronSummaryActivity[] = [];
 
-    const activitiesLUT = this.props.activities;
+    const activitiesLUT = props.activities;
 
     for (const activityId in activitiesLUT) {
       if (activitiesLUT.hasOwnProperty(activityId)) {
@@ -146,32 +129,24 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       return activity;
     });
     return activityRows;
-  }
+  };
 
-  handleChangePage(event: unknown, newPage: number) {
-    this.setState({ page: newPage });
-  }
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
-  handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState( { rowsPerPage: (parseInt(event.target.value, 10)) });
-    this.setState( { page: 0 });
-  }
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
-  handleRequestSort = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
-    const { order, orderBy } = this.state;
-
+  const handleRequestSort = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
     const isAsc = orderBy === property && order === 'asc';
-    this.setState({
-      order: isAsc ? 'desc' : 'asc'
-    });
-    this.setState({
-      orderBy: property
-    });
-  }
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
-  getEnhancedTableHead() {
-
-    const { order, orderBy } = this.state;
+  const getEnhancedTableHead = () => {
 
     return (
       <TableHead>
@@ -186,83 +161,78 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={this.handleRequestSort(headCell.id)}
+                onClick={handleRequestSort(headCell.id)}
               >
                 {headCell.label}
               </TableSortLabel>
             </TableCell>
           ))}
         </TableRow>
-      </TableHead>
+      </TableHead >
     );
-  }
+  };
 
-  render() {
+  if (Object.keys(props.activities).length > 0) {
 
-    if (Object.keys(this.props.activities).length > 0) {
+    const rows = getActivityRows();
 
-      const rows = this.getActivityRows();
+    const enhancedTableHead = getEnhancedTableHead();
 
-      const order = this.state.order;
-      const orderBy = this.state.orderBy;
-
-      const enhancedTableHead = this.getEnhancedTableHead();
-
-      return (
-        <div>
-          <TableContainer style={{ maxHeight: 800 }}>
-            <Table 
-              stickyHeader
-              size={'small'}
-            >
-              {enhancedTableHead}
-              <TableBody>
-                {stableSort(rows, getSorting(order, orderBy))
-                .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
-                .map((activity: StravatronActivity) => {
-                    return (
-                      <TableRow
-                        hover
-                        tabIndex={-1}
-                        key={activity.startDateLocal}
-                      >
-                        <TableCell align='left'>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
-                        <TableCell align='left'>{activity.name}</TableCell>
-                        <TableCell align='right'>{Converters.getMovingTime(activity.movingTime)}</TableCell>
-                        <TableCell align='right'>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
-                        <TableCell align='right'>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
-                        <TableCell align='right'>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
-                        <TableCell align='right'>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
-                        <TableCell align='right'>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
-                        <TableCell align='right'>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
-                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
-                        <TableCell align='right'>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
-                        <TableCell align='right'>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component='div'
-            count={rows.length}
-            rowsPerPage={this.state.rowsPerPage}
-            page={this.state.page}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          />
-        </div>
-      );
-    }
     return (
       <div>
-        Loading...
+        <TableContainer style={{ maxHeight: 800 }}>
+          <Table
+            stickyHeader
+            size={'small'}
+          >
+            {enhancedTableHead}
+            <TableBody>
+              {stableSort(rows, getSorting(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                // .map((activity: StravatronActivity) => {
+                .map((activity: any) => {
+                  return (
+                    <TableRow
+                      hover
+                      tabIndex={-1}
+                      key={activity.startDateLocal}
+                    >
+                      <TableCell align='left'>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
+                      <TableCell align='left'>{activity.name}</TableCell>
+                      <TableCell align='right'>{Converters.getMovingTime(activity.movingTime)}</TableCell>
+                      <TableCell align='right'>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
+                      <TableCell align='right'>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
+                      <TableCell align='right'>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
+                      <TableCell align='right'>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
+                      <TableCell align='right'>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
+                      <TableCell align='right'>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
+                      <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
+                      <TableCell align='right'>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
+                      <TableCell align='right'>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component='div'
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </div>
     );
   }
-}
+  return (
+    <div>
+      Loading...
+      </div>
+  );
+};
 
 function mapStateToProps(state: any) {
   return {
