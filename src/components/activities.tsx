@@ -30,12 +30,12 @@ type Order = 'asc' | 'desc';
 interface ActivityData {
   date: string;
   name: string;
-  ridingTime: number;
+  movingTime: number;
   distance: number;
-  elevation: number;
+  totalElevationGain: number;
   kilojoules: number;
-  np: number;
-  tss: number;
+  normalizedPower: number;
+  trainingStressScore: number;
   averageWatts: number;
   maxWatts: number;
   averageHeartrate: number;
@@ -74,12 +74,12 @@ function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
 const activityColumnCells: HeadCell[] = [
   { id: 'date', numeric: false, disablePadding: true, label: 'Date' },
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'ridingTime', numeric: true, disablePadding: false, label: 'Riding Time' },
+  { id: 'movingTime', numeric: true, disablePadding: false, label: 'Riding Time' },
   { id: 'distance', numeric: true, disablePadding: false, label: 'Distance' },
-  { id: 'elevation', numeric: true, disablePadding: false, label: 'Elevation' },
+  { id: 'totalElevationGain', numeric: true, disablePadding: false, label: 'Elevation' },
   { id: 'kilojoules', numeric: true, disablePadding: false, label: 'Kilojoules' },
-  { id: 'np', numeric: true, disablePadding: false, label: 'NP' },
-  { id: 'tss', numeric: true, disablePadding: false, label: 'TSS' },
+  { id: 'normalizedPower', numeric: true, disablePadding: false, label: 'NP' },
+  { id: 'trainingStressScore', numeric: true, disablePadding: false, label: 'TSS' },
   { id: 'averageWatts', numeric: true, disablePadding: false, label: 'Average Watts' },
   { id: 'maxWatts', numeric: true, disablePadding: false, label: 'Max Watts' },
   { id: 'averageHeartrate', numeric: true, disablePadding: false, label: 'Average Heartrate' },
@@ -152,82 +152,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       orderBy: 'date',
     };
 
-    this.handleShowDetailedMap = this.handleShowDetailedMap.bind(this);
     this.handleRequestSort = this.handleRequestSort.bind(this);
-  }
-
-  handleShowDetailedMap(activityId: number) {
-    console.log('handleShowDetailedActivity: ', activityId);
-    const hashHistory = createHashHistory();
-    hashHistory.push('/detailedActivity/' + activityId.toString());
-  }
-
-
-  buildSummaryRow(activity: StravatronActivity): any {
-
-    const self = this;
-
-    let kilojoules = '';
-    if (activity.kilojoules) {
-      kilojoules = activity.kilojoules.toFixed(0);
-    }
-
-    const normalizedPower = isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(1);
-    const tss = isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(1);
-    const averageWatts = isNil(activity.averageWatts) ? 0 : activity.averageWatts;
-
-    return (
-      <TableRow key={activity.id}>
-        <TableCell style={{ width: '64px' }}>
-          {Converters.getDateTime(activity.startDateLocal)}
-        </TableCell>
-        <TableCell style={{ width: '192px' }}>
-          {activity.name}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {Converters.getMovingTime(activity.movingTime)}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {Converters.metersToMiles(activity.distance).toFixed(1)} mi
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {kilojoules}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {normalizedPower}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {tss}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {averageWatts}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {activity.maxWatts}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {activity.averageHeartrate}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          {activity.maxHeartrate}
-        </TableCell>
-        <TableCell style={{ width: '64px' }}>
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={() => self.handleShowDetailedMap(activity.id)}
-          >
-            Show details
-          </Button>
-          />
-        </TableCell>
-        <TableCell>
-        </TableCell>
-      </TableRow>
-    );
   }
 
   getActivityRows(): any[] {
@@ -315,13 +240,13 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
                         <TableCell align='right'>{Converters.getMovingTime(activity.movingTime)}</TableCell>
                         <TableCell align='right'>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
                         <TableCell align='right'>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
-                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
+                        <TableCell align='right'>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
                         <TableCell align='right'>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
                         <TableCell align='right'>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
                         <TableCell align='right'>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
                         <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
-                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
-                        <TableCell align='right'>{isNil(activity.maxWatts) ? 0 : activity.maxHeartrate}</TableCell>
+                        <TableCell align='right'>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
+                        <TableCell align='right'>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
                       </TableRow>
                     );
                   })}
