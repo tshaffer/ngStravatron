@@ -148,19 +148,6 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     return activityRows;
   }
 
-  handleRequestSort(event: React.MouseEvent<unknown>, property: keyof ActivityData) {
-
-    const { order, orderBy } = this.state;
-
-    const isAsc = orderBy === property && order === 'asc';
-    this.setState({
-      order: isAsc ? 'desc' : 'asc'
-    });
-    this.setState({
-      orderBy: property
-    });
-  }
-
   handleChangePage(event: unknown, newPage: number) {
     this.setState({ page: newPage });
   }
@@ -170,8 +157,16 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
     this.setState( { page: 0 });
   }
 
-  createSortHandler = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
-    this.handleRequestSort(null, property);
+  handleRequestSort = (property: keyof ActivityData) => (event: React.MouseEvent<unknown>) => {
+    const { order, orderBy } = this.state;
+
+    const isAsc = orderBy === property && order === 'asc';
+    this.setState({
+      order: isAsc ? 'desc' : 'asc'
+    });
+    this.setState({
+      orderBy: property
+    });
   }
 
   getEnhancedTableHead() {
@@ -191,7 +186,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={this.createSortHandler(headCell.id)}
+                onClick={this.handleRequestSort(headCell.id)}
               >
                 {headCell.label}
               </TableSortLabel>
