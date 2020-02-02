@@ -14,6 +14,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { TablePagination } from '@material-ui/core';
+import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles';
 
 import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '../types';
 import { getActivities } from '../selectors';
@@ -86,10 +87,38 @@ const activityColumnCells: HeadCell[] = [
   { id: 'maxHeartrate', numeric: true, disablePadding: false, label: 'Max Heartrate' },
 ];
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
+    },
+    // paper: {
+    //   width: '100%',
+    //   marginBottom: theme.spacing(2),
+    // },
+    table: {
+      minWidth: 750,
+    },
+    visuallyHidden: {
+      border: 0,
+      clip: 'rect(0 0 0 0)',
+      height: 1,
+      margin: -1,
+      overflow: 'hidden',
+      padding: 0,
+      position: 'absolute',
+      top: 20,
+      width: 1,
+    },
+  }),
+);
+
+
 interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ActivityData) => void;
+  classes: ReturnType<typeof useStyles>;
   order: Order;
   orderBy: string;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ActivityData) => void;
 }
 
 class EnhancedTableHead extends React.Component<EnhancedTableProps> {
@@ -100,7 +129,7 @@ class EnhancedTableHead extends React.Component<EnhancedTableProps> {
 
   render() {
 
-    const { order, orderBy } = this.props;
+    const { classes, order, orderBy } = this.props;
 
     return (
       <TableHead>
@@ -119,7 +148,7 @@ class EnhancedTableHead extends React.Component<EnhancedTableProps> {
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
-                  <span>
+                  <span className={classes.visuallyHidden}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </span>
                 ) : null}
@@ -212,11 +241,13 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
   }
 
   handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState( { rowsPerPage: (parseInt(event.target.value, 10)) });
-    this.setState( { page: 0 });
+    this.setState({ rowsPerPage: (parseInt(event.target.value, 10)) });
+    this.setState({ page: 0 });
   }
 
   render() {
+
+    const classes = useStyles();
 
     if (Object.keys(this.props.activities).length > 0) {
 
@@ -228,7 +259,7 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
       return (
         <div>
           <TableContainer>
-            <Table 
+            <Table
               stickyHeader
               size={'small'}
             >
@@ -236,11 +267,12 @@ class Activities extends React.Component<ActivitiesProps, ActivitiesComponentPro
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={this.handleRequestSort}
+                classes={classes}
               />
               <TableBody>
                 {stableSort(rows, getSorting(order, orderBy))
-                .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
-                .map((activity: StravatronActivity, index) => {
+                  .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
+                  .map((activity: StravatronActivity, index) => {
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
