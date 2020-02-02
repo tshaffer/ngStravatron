@@ -118,11 +118,6 @@ class EnhancedTableHead extends React.Component<EnhancedTableProps> {
                 onClick={this.createSortHandler(headCell.id)}
               >
                 {headCell.label}
-                {orderBy === headCell.id ? (
-                  <span>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </span>
-                ) : null}
               </TableSortLabel>
             </TableCell>
           ))}
