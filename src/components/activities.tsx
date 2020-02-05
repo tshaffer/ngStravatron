@@ -22,6 +22,8 @@ import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '..
 import { getActivities } from '../selectors';
 import * as Converters from '../utilities/converters';
 
+import { loadSummaryActivities } from '../controllers';
+
 type Order = 'asc' | 'desc';
 interface ActivityData {
   date: string;
@@ -155,6 +157,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface ActivitiesProps {
   activities: ActivitiesMap;
+  onLoadActivities: () => any;
 }
 
 const Activities = (props: ActivitiesProps) => {
@@ -163,6 +166,18 @@ const Activities = (props: ActivitiesProps) => {
   const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  React.useEffect(() => {
+    if (isNil(props.activities) || Object.keys(props.activities).length === 0) {
+      props.onLoadActivities();
+    }
+    else {
+      console.log('not invoking onLoadActivities');
+      if (!isNil(props.activities)) {
+        console.log(Object.keys(props.activities).length);
+      }
+    }
+  });
 
   const getActivityRows = (): any[] => {
 
@@ -307,6 +322,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({
+    onLoadActivities: loadSummaryActivities,
   }, dispatch);
 };
 
