@@ -8,6 +8,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { createHashHistory } from 'history';
 
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 
 import { loadSummaryActivities } from '../controllers';
 
@@ -48,9 +49,12 @@ class App extends React.Component<AppProps> {
           >
             Show athlete activities
           </Button>
-          <Button color="primary" component={RouterLink} to="/activities">
-            Test
+          <Button color='primary' component={RouterLink} to='/activities'>
+            Button Test
           </Button>
+          <Link component={RouterLink} to='/activities'>
+            Link Test
+          </Link>
         </div>
       </HashRouter>
     );
