@@ -228,18 +228,10 @@ const Activities = (props: ActivitiesProps) => {
     setOrderBy(property);
   };
 
-  // const handleShowDetails = () => {
-  //   console.log('handleShowDetails');
-  //   // console.log(arg1);
-  //   // console.log(arg2);
-  //   // console.log(arg3);
-  // };
-
-  function handleShowDetails(rowIndex: number) {
-    console.log('handleShowDetails');
-    console.log(arguments);
-    console.log(arguments.length);
-    console.log(rowIndex);
+  function handleShowDetails(activityId: number) {
+    console.log('handleShowDetails: ' + activityId);
+    const hashHistory = createHashHistory();
+    hashHistory.push('/detailedActivity/' + activityId.toString());
   }
 
   if (Object.keys(props.activities).length > 0) {
@@ -284,7 +276,7 @@ const Activities = (props: ActivitiesProps) => {
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
                         <TableCell align='center' className={classes.tableButtonColumnWidth}>
-                          <Button variant='contained' color='primary' onClick={() => handleShowDetails(index)}>
+                          <Button variant='contained' color='primary' onClick={() => handleShowDetails(activity.id)}>
                             Details
                           </Button>
                         </TableCell>

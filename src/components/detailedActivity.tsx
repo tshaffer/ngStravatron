@@ -135,6 +135,9 @@ export interface DetailedActivityProps {
 }
 
 const DetailedActivity = (props: DetailedActivityProps) => {
+
+  console.log('DetailedActivity invoked');
+  
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof DetailedActivityData>('name');
