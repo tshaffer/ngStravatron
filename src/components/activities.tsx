@@ -16,6 +16,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { TablePagination } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 
 import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '../types';
 import { getActivities } from '../selectors';
@@ -51,8 +52,8 @@ const activityColumnCells: HeadCell[] = [
   { id: 'distance', numeric: true, label: 'Distance', width: '64px' },
   { id: 'totalElevationGain', numeric: true, label: 'Elevation', width: '64px' },
   { id: 'kilojoules', numeric: true, label: 'Kilojoules', width: '64px' },
-  { id: 'normalizedPower', numeric: true, label: 'NP', width: '64px' },
-  { id: 'trainingStressScore', numeric: true, label: 'TSS', width: '64px' },
+  { id: 'normalizedPower', numeric: true, label: 'NP', width: '32px' },
+  { id: 'trainingStressScore', numeric: true, label: 'TSS', width: '32px' },
   { id: 'averageWatts', numeric: true, label: 'Average Watts', width: '64px' },
   { id: 'maxWatts', numeric: true, label: 'Max Watts', width: '64px' },
   { id: 'averageHeartrate', numeric: true, label: 'Average Heartrate', width: '64px' },
@@ -137,12 +138,18 @@ const useStyles = makeStyles((theme: Theme) =>
     table: {
       minWidth: 750,
     },
+    tableColumnNarrowWidth: {
+      width: '32px',
+    },
     tableColumnMediumWidth: {
       width: '64px',
     },
     tableColumnWideWidth: {
       width: '192px',
-    }
+    },
+    tableButtonColumnWidth: {
+      width: '48px',
+    },
   }),
 );
 
@@ -206,6 +213,20 @@ const Activities = (props: ActivitiesProps) => {
     setOrderBy(property);
   };
 
+  // const handleShowDetails = () => {
+  //   console.log('handleShowDetails');
+  //   // console.log(arg1);
+  //   // console.log(arg2);
+  //   // console.log(arg3);
+  // };
+
+  function handleShowDetails(rowIndex: number) {
+    console.log('handleShowDetails');
+    console.log(arguments);
+    console.log(arguments.length);
+    console.log(rowIndex);
+  }
+
   if (Object.keys(props.activities).length > 0) {
 
     const rows = getActivityRows();
@@ -228,7 +249,7 @@ const Activities = (props: ActivitiesProps) => {
                 {stableSort(rows, getSorting(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   // .map((activity: StravatronActivity) => {
-                  .map((activity: any) => {
+                  .map((activity: any, index: number) => {
                     return (
                       <TableRow
                         hover
@@ -241,12 +262,17 @@ const Activities = (props: ActivitiesProps) => {
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnNarrowWidth}>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
+                        <TableCell align='right' className={classes.tableColumnNarrowWidth}>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
                         <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
+                        <TableCell align='center' className={classes.tableButtonColumnWidth}>
+                          <Button variant='contained' color='primary' onClick={() => handleShowDetails(index)}>
+                            Details
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
