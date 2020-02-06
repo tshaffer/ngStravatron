@@ -6,6 +6,9 @@ import { connect } from 'react-redux';
 
 import { createHashHistory } from 'history';
 
+import { HashRouter } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -14,7 +17,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import { TablePagination } from '@material-ui/core';
+import { TablePagination, Link } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
@@ -239,64 +242,74 @@ const Activities = (props: ActivitiesProps) => {
     const rows = getActivityRows();
 
     return (
-      <div className={classes.root}>
-        <Paper className={classes.paper}>
-          <TableContainer style={{ maxHeight: 800 }}>
-            <Table
-              stickyHeader
-              size={'small'}
-            >
-              <ActivitiesTableHeader
-                classes={classes}
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={handleRequestSort}
-              />
-              <TableBody>
-                {stableSort(rows, getSorting(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  // .map((activity: StravatronActivity) => {
-                  .map((activity: any, index: number) => {
-                    return (
-                      <TableRow
-                        hover
-                        tabIndex={-1}
-                        key={activity.startDateLocal}
-                      >
-                        <TableCell align='left' className={classes.tableColumnMediumWidth}>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
-                        <TableCell align='left' className={classes.tableColumnWideWidth}>{activity.name}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.getMovingTime(activity.movingTime)}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnNarrowWidth}>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnNarrowWidth}>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
-                        <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
-                        <TableCell align='center' className={classes.tableButtonColumnWidth}>
-                          <Button variant='contained' color='primary' onClick={() => handleShowDetails(activity.id)}>
-                            Details
+      <HashRouter>
+        <div className={classes.root}>
+          <Paper className={classes.paper}>
+            <TableContainer style={{ maxHeight: 800 }}>
+              <Table
+                stickyHeader
+                size={'small'}
+              >
+                <ActivitiesTableHeader
+                  classes={classes}
+                  order={order}
+                  orderBy={orderBy}
+                  onRequestSort={handleRequestSort}
+                />
+                <TableBody>
+                  {stableSort(rows, getSorting(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    // .map((activity: StravatronActivity) => {
+                    .map((activity: any, index: number) => {
+                      return (
+                        <TableRow
+                          hover
+                          tabIndex={-1}
+                          key={activity.startDateLocal}
+                        >
+                          <TableCell align='left' className={classes.tableColumnMediumWidth}>{Converters.getDateTime(activity.startDateLocal)}</TableCell>
+                          <TableCell
+                            align='left'
+                            className={classes.tableColumnWideWidth}
+                          >
+                            <Link component={RouterLink} to={'/detailedActivity/' + activity.id.toString()}>
+                              {activity.name}
+                            </Link>
+                          </TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.getMovingTime(activity.movingTime)}</TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToMiles(activity.distance).toFixed(1)} mi</TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.metersToFeet(activity.totalElevationGain).toFixed(0)} ft</TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.kilojoules) ? 0 : activity.kilojoules ? activity.kilojoules.toFixed(0) : ''}</TableCell>
+                          <TableCell align='right' className={classes.tableColumnNarrowWidth}>{isNil(activity.normalizedPower) ? '' : activity.normalizedPower.toFixed(0)}</TableCell>
+                          <TableCell align='right' className={classes.tableColumnNarrowWidth}>{isNil(activity.trainingStressScore) ? '' : activity.trainingStressScore.toFixed(0)}</TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageWatts) ? 0 : activity.averageWatts.toFixed(0)}</TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
+                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
+                          <TableCell align='center' className={classes.tableButtonColumnWidth}>
+                            <Button variant='contained' color='primary' onClick={() => handleShowDetails(activity.id)}>
+                              Details
                           </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component='div'
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component='div'
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </Paper>
+        </div>
+      </HashRouter>
+
     );
   }
   return (
