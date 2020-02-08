@@ -557,17 +557,12 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
   return (
     <div>
+      <Link to='/' style={{ marginRight: '12px' }}>Home</Link>
+      <Link to='/activities' style={{ marginRight: '12px' }}>Back</Link>
+      <button style={{ marginRight: '12px' }} onClick={() => handleFetchEfforts(activity.id)}>Refresh efforts</button>
+      <button style={{ marginRight: '12px' }} onClick={() => handleGetMmpData(activity.id)}>Get MMP Data</button>
+      <br />
       {summaryContainer}
-      <Link to='/'>Home</Link>
-      <br />
-      <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
-      <br />
-      <button onClick={() => handleFetchEfforts(activity.id)}>Refresh efforts</button>
-      <br />
-      <button onClick={() => handleGetMmpData(activity.id)}>Get MMP Data</button>
-      <br />
-      <br />
-      <br />
       {segmentEffortsTable}
     </div >
   );
