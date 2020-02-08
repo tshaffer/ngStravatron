@@ -231,12 +231,6 @@ const Activities = (props: ActivitiesProps) => {
     setOrderBy(property);
   };
 
-  function handleShowDetails(activityId: number) {
-    console.log('handleShowDetails: ' + activityId);
-    const hashHistory = createHashHistory();
-    hashHistory.push('/detailedActivity/' + activityId.toString());
-  }
-
   if (Object.keys(props.activities).length > 0) {
 
     const rows = getActivityRows();
@@ -286,11 +280,6 @@ const Activities = (props: ActivitiesProps) => {
                           <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxWatts) ? 0 : activity.maxWatts.toFixed(0)}</TableCell>
                           <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.averageHeartrate) ? 0 : activity.averageHeartrate.toFixed(0)}</TableCell>
                           <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(activity.maxHeartrate) ? 0 : activity.maxHeartrate}</TableCell>
-                          <TableCell align='center' className={classes.tableButtonColumnWidth}>
-                            <Button variant='contained' color='primary' onClick={() => handleShowDetails(activity.id)}>
-                              Details
-                          </Button>
-                          </TableCell>
                         </TableRow>
                       );
                     })}

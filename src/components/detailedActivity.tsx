@@ -138,6 +138,8 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
   console.log('DetailedActivity invoked');
   
+  const [initialized, setInitialized] = React.useState(false);
+
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof DetailedActivityData>('name');
@@ -146,9 +148,11 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
   const { onLoadDetailedActivity, onForceReloadEfforts, onGetMmpData, effortsForSegments, segmentsMap, segmentEfforts } = props;
 
-  React.useEffect(() => {
+  if (!initialized) {
+    console.log('invoke onLoadDetailedActivity');
     onLoadDetailedActivity(props.activityId);
-  });
+    setInitialized(true);
+  }
 
   const handleFetchEfforts = (activityId: number) => {
     console.log('handleFetchEfforts: ', activityId);
