@@ -115,6 +115,23 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     tableColumnWideWidth: {
       width: '192px',
+    },
+    sideBySideBoxes: {
+      display: 'table',
+      clear: 'both',
+      width: '100%'
+    },
+    leftBox: {
+      float: 'left',
+      width: '33%',
+      height: '300px',
+      backgroundColor: 'lightYellow'
+    },
+    rightBox: {
+      float: 'left',
+      height: '300px',
+      width: '67%',
+      backgroundColor: 'lightBlue'
     }
   }),
 );
@@ -137,7 +154,7 @@ export interface DetailedActivityProps {
 const DetailedActivity = (props: DetailedActivityProps) => {
 
   console.log('DetailedActivity invoked');
-  
+
   const [initialized, setInitialized] = React.useState(false);
 
   const classes = useStyles();
@@ -507,20 +524,19 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
   const rideSummaryHeader = buildRideSummaryHeader(activity);
   const segmentEffortsTable = buildSegmentEffortsTable();
-  // return (
-  //   <div>
-  //     <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
-  //     <br />
-  //     {rideSummaryHeader}
-  //     <button onClick={() => this.handleFetchEfforts(activity.id)}>Refresh efforts</button>
-  //     <br />
-  //     {segmentEffortsTable}
-  //   </div>
-  // );
 
-  // <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
   return (
     <div>
+      <div className={classes.sideBySideBoxes}>
+        <h2>W3 docs</h2>
+        <div className={classes.leftBox}>
+          Left yellow box
+        </div>
+        <div className={classes.rightBox}>
+          Right blue box
+        </div>
+      </div>
+
       <Link to='/'>Home</Link>
       <br />
       <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
@@ -534,7 +550,7 @@ const DetailedActivity = (props: DetailedActivityProps) => {
       <br />
       <br />
       {segmentEffortsTable}
-    </div>
+    </div >
   );
 };
 
