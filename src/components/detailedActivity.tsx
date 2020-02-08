@@ -123,15 +123,20 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     leftBox: {
       float: 'left',
-      width: '33%',
+      width: '50%',
       height: '300px',
-      backgroundColor: 'lightYellow'
+      backgroundColor: 'lightGray'
     },
     rightBox: {
       float: 'left',
       height: '300px',
-      width: '67%',
-      backgroundColor: 'lightBlue'
+      width: '50%',
+      backgroundColor: 'lightGray'
+    },
+    boldParagraph: {
+      fontWeight: 'bold',
+      marginTop: '4px',
+      marginBottom: '4px'
     }
   }),
 );
@@ -510,6 +515,33 @@ const DetailedActivity = (props: DetailedActivityProps) => {
     );
   };
 
+  const getSummaryContainer = () => {
+
+    const { detailedActivity } = props;
+
+    const np = isNil(detailedActivity.normalizedPower) ? '' : detailedActivity.normalizedPower.toFixed(1);
+    const calories = isNil(detailedActivity.kilojoules) ? '' : detailedActivity.kilojoules.toFixed(0);
+    const tss = isNil(detailedActivity.trainingStressScore) ? '' : detailedActivity.trainingStressScore.toFixed(1);
+
+    return (
+      <div className={classes.sideBySideBoxes}>
+        <h2>W3 docs</h2>
+        <div className={classes.leftBox}>
+          <h1>{props.detailedActivity.name}</h1>
+          <h4>{Converters.getDateTime(detailedActivity.startDateLocal)}</h4>
+          <h4>Elapsed time: {Converters.getMovingTime(detailedActivity.movingTime)}</h4>
+          <h4>Distance: {Converters.metersToMiles(detailedActivity.distance).toFixed(1)} mi</h4>
+        </div>
+        <div className={classes.rightBox}>
+          <p className={classes.boldParagraph}>Normalized Power: {np}</p>
+          <p className={classes.boldParagraph}>Calories: {calories}</p>
+          <p className={classes.boldParagraph}>Training Stress Score: {tss}</p>
+          <p className={classes.boldParagraph}>Elevation Gain: {Converters.metersToFeet(detailedActivity.totalElevationGain).toFixed(0)} ft</p>
+        </div>
+      </div>
+    );
+  };
+
   const activity = props.detailedActivity;
 
   console.log('detailedActivityAttributes');
@@ -522,21 +554,13 @@ const DetailedActivity = (props: DetailedActivityProps) => {
     return <div>Loading...</div>;
   }
 
+  const summaryContainer = getSummaryContainer();
   const rideSummaryHeader = buildRideSummaryHeader(activity);
   const segmentEffortsTable = buildSegmentEffortsTable();
 
   return (
     <div>
-      <div className={classes.sideBySideBoxes}>
-        <h2>W3 docs</h2>
-        <div className={classes.leftBox}>
-          Left yellow box
-        </div>
-        <div className={classes.rightBox}>
-          Right blue box
-        </div>
-      </div>
-
+      {summaryContainer}
       <Link to='/'>Home</Link>
       <br />
       <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
