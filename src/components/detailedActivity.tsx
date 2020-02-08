@@ -123,7 +123,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     leftBox: {
       float: 'left',
-      width: '50%',
+      width: '45%',
       height: '300px',
       backgroundColor: 'lightGray'
     },
@@ -131,7 +131,13 @@ const useStyles = makeStyles((theme: Theme) =>
       float: 'left',
       height: '300px',
       width: '50%',
-      backgroundColor: 'lightGray'
+      backgroundColor: 'lightGray',
+      paddingLeft: '8px'
+    },
+    verticalLine: {
+      float: 'left',
+      height: '300px',
+      borderLeft: '4px solid darkGray'
     },
     boldParagraph: {
       fontWeight: 'bold',
@@ -532,6 +538,7 @@ const DetailedActivity = (props: DetailedActivityProps) => {
           <h4>Elapsed time: {Converters.getMovingTime(detailedActivity.movingTime)}</h4>
           <h4>Distance: {Converters.metersToMiles(detailedActivity.distance).toFixed(1)} mi</h4>
         </div>
+        <div className={classes.verticalLine}></div>
         <div className={classes.rightBox}>
           <p className={classes.boldParagraph}>Normalized Power: {np}</p>
           <p className={classes.boldParagraph}>Calories: {calories}</p>
