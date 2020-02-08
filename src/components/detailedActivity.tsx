@@ -192,64 +192,6 @@ const DetailedActivity = (props: DetailedActivityProps) => {
     onGetMmpData(activityId);
   };
 
-  const buildRideSummaryHeader = (detailedActivity: StravatronActivity) => {
-
-    if (isNil(detailedActivity)) {
-      return <div>Loading</div>;
-    }
-
-    let calories = '';
-    if (detailedActivity.kilojoules) {
-      calories = detailedActivity.kilojoules.toFixed(0);
-    }
-
-    const averageWatts = isNil(detailedActivity.averageWatts) ? 0 : detailedActivity.averageWatts;
-    const np = isNil(detailedActivity.normalizedPower) ? '' : detailedActivity.normalizedPower.toFixed(1);
-    const tss = isNil(detailedActivity.trainingStressScore) ? '' : detailedActivity.trainingStressScore.toFixed(1);
-
-    return (
-      <div id='RideSummary'>
-        <TableContainer>
-          <Table className='summaryTable'>
-
-            <TableHead>
-              <TableRow className='summaryLabels'>
-                <TableCell style={{ width: '192px' }}>{Converters.getDateTime(detailedActivity.startDateLocal)}</TableCell>
-                <TableCell style={{ width: '64px' }}>Time</TableCell>
-                <TableCell>Elevation</TableCell>
-                <TableCell>Distance</TableCell>
-                <TableCell>Kilojoules</TableCell>
-                <TableCell>NP</TableCell>
-                <TableCell>TSS</TableCell>
-                <TableCell>Average Watts</TableCell>
-                <TableCell>Max Watts</TableCell>
-                <TableCell>Average Heart Rate</TableCell>
-                <TableCell>Max Heart Rate</TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              <TableRow className='summaryDataRow'>
-                <TableCell style={{ width: '192px' }}>{detailedActivity.name}</TableCell>
-                <TableCell style={{ width: '64px' }}>{Converters.getMovingTime(detailedActivity.movingTime)}</TableCell>
-                <TableCell>{Converters.metersToFeet(detailedActivity.totalElevationGain).toFixed(0)} ft</TableCell>
-                <TableCell>{Converters.metersToMiles(detailedActivity.distance).toFixed(1)} mi</TableCell>
-                <TableCell>{calories}</TableCell>
-                <TableCell>{np}</TableCell>
-                <TableCell>{tss}</TableCell>
-                <TableCell>{averageWatts}</TableCell>
-                <TableCell>{detailedActivity.maxWatts}</TableCell>
-                <TableCell>{detailedActivity.averageHeartrate}</TableCell>
-                <TableCell>{detailedActivity.maxHeartrate}</TableCell>
-              </TableRow>
-            </TableBody>
-
-          </Table>
-        </TableContainer>
-      </div >
-    );
-  };
-
   const analyzeEffortsForSegment = (effortsForSegment: StravatronSegmentEffort[]): any => {
 
     const effortsSortedByMovingTime: StravatronSegmentEffort[] = effortsForSegment.concat();
@@ -611,7 +553,6 @@ const DetailedActivity = (props: DetailedActivityProps) => {
   }
 
   const summaryContainer = getSummaryContainer();
-  const rideSummaryHeader = buildRideSummaryHeader(activity);
   const segmentEffortsTable = buildSegmentEffortsTable();
 
   return (
@@ -620,8 +561,6 @@ const DetailedActivity = (props: DetailedActivityProps) => {
       <Link to='/'>Home</Link>
       <br />
       <Link to='/activities' id='backFromDetailedActivityButton'>Back</Link>
-      <br />
-      {rideSummaryHeader}
       <br />
       <button onClick={() => handleFetchEfforts(activity.id)}>Refresh efforts</button>
       <br />
