@@ -521,6 +521,53 @@ const DetailedActivity = (props: DetailedActivityProps) => {
     );
   };
 
+  const getSummaryDataTable = () => {
+
+    const { detailedActivity } = props;
+
+    const averageWatts = isNil(detailedActivity.averageWatts) ? 0 : detailedActivity.averageWatts;
+
+    return (
+      <div style={{ marginTop: '16px' }}>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>Average</TableCell>
+                <TableCell>Maximum</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  Power
+                </TableCell>
+                <TableCell>
+                  {averageWatts}
+                </TableCell>
+                <TableCell>
+                  {detailedActivity.maxWatts}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  Heart Rate
+                </TableCell>
+                <TableCell>
+                  {detailedActivity.averageHeartrate}
+                </TableCell>
+                <TableCell>
+                  {detailedActivity.maxHeartrate}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    );
+  };
+
   const getSummaryContainer = () => {
 
     const { detailedActivity } = props;
@@ -529,9 +576,10 @@ const DetailedActivity = (props: DetailedActivityProps) => {
     const calories = isNil(detailedActivity.kilojoules) ? '' : detailedActivity.kilojoules.toFixed(0);
     const tss = isNil(detailedActivity.trainingStressScore) ? '' : detailedActivity.trainingStressScore.toFixed(1);
 
+    const summaryDataTable = getSummaryDataTable();
+
     return (
       <div className={classes.sideBySideBoxes}>
-        <h2>W3 docs</h2>
         <div className={classes.leftBox}>
           <h1>{props.detailedActivity.name}</h1>
           <h4>{Converters.getDateTime(detailedActivity.startDateLocal)}</h4>
@@ -544,6 +592,7 @@ const DetailedActivity = (props: DetailedActivityProps) => {
           <p className={classes.boldParagraph}>Calories: {calories}</p>
           <p className={classes.boldParagraph}>Training Stress Score: {tss}</p>
           <p className={classes.boldParagraph}>Elevation Gain: {Converters.metersToFeet(detailedActivity.totalElevationGain).toFixed(0)} ft</p>
+          {summaryDataTable}
         </div>
       </div>
     );

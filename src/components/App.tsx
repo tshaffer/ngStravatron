@@ -38,22 +38,12 @@ class App extends React.Component<AppProps> {
     return (
       <HashRouter>
         <div>
-          <h2>StravaTed</h2>
-          Eat more pizza and burgers!
+          <h2>Stravatron</h2>
+          Click on an athlete below to see their activities
           <br />
           <br />
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={this.handleShowActivities}
-          >
-            Show athlete activities
-          </Button>
-          <Button color='primary' component={RouterLink} to='/activities'>
-            Button Test
-          </Button>
           <Link component={RouterLink} to='/activities'>
-            Link Test
+            Old Man Shaffer
           </Link>
         </div>
       </HashRouter>
