@@ -66,10 +66,13 @@ const activityColumnCells: HeadCell[] = [
 ];
 
 function desc<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
+  // TEDTODO - not appropriate if array contains strings.
+  const x = isNil(a[orderBy]) ? 0 : a[orderBy];
+  const y = isNil(b[orderBy]) ? 0 : b[orderBy];
+  if (y < x) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+  if (y > x) {
     return 1;
   }
   return 0;
