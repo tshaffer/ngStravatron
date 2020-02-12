@@ -178,18 +178,13 @@ const Activities = (props: ActivitiesProps) => {
   const [orderBy, setOrderBy] = React.useState<keyof ActivityData>('date');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [initialized, setInitialized] = React.useState(false);
 
-  React.useEffect(() => {
-    if (isNil(props.activities) || Object.keys(props.activities).length === 0) {
-      props.onLoadActivities();
-    }
-    else {
-      console.log('not invoking onLoadActivities');
-      if (!isNil(props.activities)) {
-        console.log(Object.keys(props.activities).length);
-      }
-    }
-  });
+  if (!initialized) {
+    console.log('invoke onLoadActivities');
+    props.onLoadActivities();
+    setInitialized(true);
+  }
 
   const getActivityRows = (): any[] => {
 
