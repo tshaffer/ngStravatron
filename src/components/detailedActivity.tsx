@@ -236,12 +236,39 @@ const DetailedActivity = (props: DetailedActivityProps) => {
     return analyzedEffortsForSegment;
   };
 
+  // const getRecentEffort = (recentEfforts: any[], recentEffortIndex: number) => {
+  //   switch (recentEffortIndex) {
+  //     case 0:
+  //       return <span>pizza</span>;
+  //     case 1:
+  //       return <span>burger</span>;
+  //     case 2:
+  //       return <span>salami</span>;
+  //   }
+  //   return null;
+  // };
+
+  const buildRecentEffortJsx = (recentEffort: any) => {
+    const recentEffortJsx =
+      <div>
+        <span>{Converters.elapsedTimeToTimeString(recentEffort.movingTime)}</span>
+        <span> on </span>
+        <span className='smallDimDate'>{Converters.formatDate(recentEffort.date)}</span>
+      </div>
+      ;
+    return recentEffortJsx;
+  };
+
+  const buildRecentEffortsJsx = (recentEfforts: any[]) => {
+    const recentEffortEntries = recentEfforts.map((recentEffort: any) => {
+      return buildRecentEffortJsx(recentEffort);
+    });
+    return recentEffortEntries;
+  };
+
+
   // TEDTODO - come up with a better name - it's not just recent efforts
   const buildRecentEfforts = (segmentId: number): any => {
-
-    // if (segmentId === 18385727) {
-    //   debugger;
-    // }
 
     let recentEffortsLbl: any;
     let effortsForSegmentLbl: any;
@@ -259,6 +286,7 @@ const DetailedActivity = (props: DetailedActivityProps) => {
           (
             <span>
               <span>{bestEffortTime}</span>
+              <span> on </span>
               <span className='smallDimDate'>{bestEffortDate}</span>
             </span>
           );
@@ -283,47 +311,74 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
         // effortsSortedByDate
         const recentEfforts = [];
-        const recentEffort =
-        {
-          movingTime: '',
-          date: '',
-          separator: ''
-        };
+        // const recentEffort =
+        // {
+        //   movingTime: '',
+        //   date: '',
+        //   separator: ''
+        // };
 
-        recentEfforts.push(recentEffort);
-        recentEfforts.push(recentEffort);
-        recentEfforts.push(recentEffort);
+        // recentEfforts.push(recentEffort);
+        // recentEfforts.push(recentEffort);
+        // recentEfforts.push(recentEffort);
 
         let index = 0;
         while (index < 3) {
           if (effortData.effortsSortedByDate.length > (index + 1)) {
             const effort = effortData.effortsSortedByDate[index + 1];
-            recentEfforts[index] =
-            {
+            const recentEffort = {
               movingTime: effort.movingTime,
               date: effort.startDateLocal,
-              separator: ', '
+              separator: ','
             };
+            recentEfforts.push(recentEffort);
+            // recentEfforts[index] =
+            // {
+            //   movingTime: effort.movingTime,
+            //   date: effort.startDateLocal,
+            //   separator: ', '
+            // };
           }
           index++;
         }
 
-        recentEffortsLbl =
-          (
-            <span>
-              <span>{Converters.elapsedTimeToTimeString(recentEfforts[0].movingTime)}</span>
-              <span> on </span>
-              <span className='smallDimDate'>{Converters.formatDate(recentEfforts[0].date)}</span>
-              <span>{recentEfforts[1].separator}</span>
-              <span>{Converters.elapsedTimeToTimeString(recentEfforts[1].movingTime)}</span>
-              <span> on </span>
-              <span className='smallDimDate'>{Converters.formatDate(recentEfforts[1].date)}</span>
-              <span>{recentEfforts[2].separator}</span>
-              <span>{Converters.elapsedTimeToTimeString(recentEfforts[2].movingTime)}</span>
-              <span> on </span>
-              <span className='smallDimDate'>{Converters.formatDate(recentEfforts[2].date)}</span>
-            </span>
-          );
+        recentEffortsLbl = buildRecentEffortsJsx(recentEfforts);
+
+        // const line1 = getRecentEffort(recentEfforts, 0);
+
+        // recentEffortsLbl = (
+        //   { line1 }
+        // );
+
+        // recentEffortsLbl =
+        //   (
+        //     <span>
+        //       <span>pizza</span>
+        //       <span> on </span>
+        //       <span>Tuesday</span>
+        //     </span>
+        //   );
+
+        //   (
+        //     { this.getRecentEffort(0) }
+        // //     { this.getRecentEffort(1) }
+        // // { this.getRecentEffort(2) }
+        //   );
+        // }
+        //   <span>
+        //     <span>{Converters.elapsedTimeToTimeString(recentEfforts[0].movingTime)}</span>
+        //     <span> on </span>
+        //     <span className='smallDimDate'>{Converters.formatDate(recentEfforts[0].date)}</span>
+        //     <span>{recentEfforts[1].separator}</span>
+        //     <span>{Converters.elapsedTimeToTimeString(recentEfforts[1].movingTime)}</span>
+        //     <span> on </span>
+        //     <span className='smallDimDate'>{Converters.formatDate(recentEfforts[1].date)}</span>
+        //     <span>{recentEfforts[2].separator}</span>
+        //     <span>{Converters.elapsedTimeToTimeString(recentEfforts[2].movingTime)}</span>
+        //     <span> on </span>
+        //     <span className='smallDimDate'>{Converters.formatDate(recentEfforts[2].date)}</span>
+        //   </span>
+        // );
       }
     }
     return { recentEffortsLbl, effortsForSegmentLbl };
