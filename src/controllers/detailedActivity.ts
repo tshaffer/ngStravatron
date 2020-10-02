@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { isArray } from 'lodash';
+
 import { addDetailedActivityAttributes, addSegment, addSegmentEffort, addStreams } from '../models';
 import {
   StravatronDetailedActivityData, StravatronSegmentEffort
@@ -19,8 +21,10 @@ export const loadDetailedActivity = (activityId: number): any => {
 
         dispatch(addDetailedActivityAttributes(activityId, detailedActivityAttributes));
 
-        for (const detailedSegment of segments) {
-          dispatch(addSegment(detailedSegment.id, detailedSegment));
+        if (isArray(segments)) {
+          for (const detailedSegment of segments) {
+            dispatch(addSegment(detailedSegment.id, detailedSegment));
+          }  
         }
 
         for (const segmentEffortInActivity of allSegmentEffortsForSegmentsInActivity) {
