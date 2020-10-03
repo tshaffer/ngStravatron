@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { addActivity } from '../models/activity';
+import { serverUrl } from '../index';
 
-const serverUrl = 'http://localhost:8000';
-const apiUrlFragment = '/api/v1/';
+const apiUrlFragment = 'api/v1';
 
 export const loadSummaryActivities = (): any => {
   console.log('loadSummaryActivities invoked');

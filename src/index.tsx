@@ -14,6 +14,10 @@ import App from './components/app';
 import Activities from './components/activities';
 import DetailedActivity from './components/detailedActivity';
 
+// export const serverUrl = 'http://localhost:5000';
+// export const serverUrl = 'https://damp-falls-28733.herokuapp.com';
+export const serverUrl = 'https://limitless-sands-40320.herokuapp.com/';
+
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   rootReducer, /* preloadedState, */ composeEnhancers(
