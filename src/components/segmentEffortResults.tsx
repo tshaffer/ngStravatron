@@ -4,41 +4,33 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Link } from 'react-router-dom';
-import { Link as RouterLink } from 'react-router-dom';
-
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-
-import * as Converters from '../utilities/converters';
-
 import {
-  SegmentsMap,
-  StravatronDetailedSegment,
-  StravatronSegmentEffortsBySegment,
   StravatronSegmentEffort,
-  StravatronActivity,
 } from '../types';
 
-import {
-  getStravatronDetailedActivityAttributes,
-  getSegmentEffortsForActivity,
-  getSegments,
-  getEffortsForActivitySegments
-} from '../selectors/detailedActivity';
+import { loadSegmentEffortResults } from '../controllers';
+import { getSegmentEffortResults } from '../selectors';
 
 export interface SegmentEffortResultsProps {
-  activityId: number;
-  effortsForSegments: StravatronSegmentEffortsBySegment;
-  segmentEffortId: number;
-  segmentEfforts: StravatronSegmentEffort[];
+  segmentId: number;
+  segmentEffortResults: StravatronSegmentEffort[];
+  onLoadSegmentEfforts: (segmentId: number) => any;
 }
 
 const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
+
+  const { onLoadSegmentEfforts, segmentId } = props;
+
+  const [initialized, setInitialized] = React.useState(false);
+
+  if (!initialized) {
+    console.log('invoke onLoadSegmentEfforts');
+    onLoadSegmentEfforts(segmentId);
+    setInitialized(true);
+  }
+
+  console.log('segmentEffortResults');
+  console.log(props.segmentEffortResults);
 
   return (
     <div>
@@ -53,22 +45,17 @@ function mapStateToProps(state: any, ownProps: any) {
   console.log('segmentEffortResults');
   console.log(state);
   console.log(ownProps);
-  console.log(getEffortsForActivitySegments(state, parseInt(ownProps.match.params.id, 10)));
 
+  const segmentId = parseInt(ownProps.match.params.id, 10);
   return {
-    activityId: parseInt(ownProps.match.params.id, 10),
-    effortsForSegments: getEffortsForActivitySegments(state, parseInt(ownProps.match.params.id, 10)),
-
-    // segmentEffortId: parseInt(ownProps.match.params.id, 10),
-    // segmentEfforts: getEffortsForSegment(state, parseInt(ownProps.match.params.id, 10)),
+    segmentId,
+    segmentEffortResults: getSegmentEffortResults(state, segmentId),
   };
 }
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({
-    // onLoadSegmentEffortResults: loadSegmentEffortResults,
-    // onForceReloadEfforts: forceReloadEfforts,
-    // onGetMmpData: getMmpData,
+    onLoadSegmentEfforts: loadSegmentEffortResults,
   }, dispatch);
 };
 

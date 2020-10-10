@@ -12,6 +12,7 @@ export interface StravaModelState {
   segments: SegmentsMap;
   segmentEfforts: SegmentEffortsMap;
   streams: StravatronActivityStreams;
+  segmentEffortResults: SegmentEffortResultsMap;
 }
 
 export interface ActivitiesMap {
@@ -33,4 +34,9 @@ export interface SegmentEffortsMap {
 export interface StravatronSegmentEffortsBySegment {
   [id: string]: StravatronSegmentEffort[]; // segmentId
 }
+
+export interface SegmentEffortResultsMap {
+  [id: string]: StravatronSegmentEffort[]; // segmentId
+}
+
 

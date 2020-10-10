@@ -4,3 +4,4 @@ export * from './detailedActivity';
 export * from './segment';
 export * from './segmentEffort';
 export * from './streams';
+export * from './segmentEffortResults';

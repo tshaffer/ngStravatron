@@ -10,6 +10,7 @@ import { detailedActivityReducer } from './detailedActivity';
 import { segmentEffortReducer } from './segmentEffort';
 import { segmentReducer } from './segment';
 import { streamsReducer } from './streams';
+import { segmentEffortResultsReducer } from './segmentEffortResults';
 
 // -----------------------------------------------------------------------
 // Reducers
@@ -20,6 +21,7 @@ export const rootReducer = combineReducers<StravaModelState>({
   segmentEfforts: segmentEffortReducer,
   segments: segmentReducer,
   streams: streamsReducer,
+  segmentEffortResults: segmentEffortResultsReducer,
 });
 
 // -----------------------------------------------------------------------
