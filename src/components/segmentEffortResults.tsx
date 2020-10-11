@@ -4,6 +4,8 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router-dom';
+
 import { HashRouter } from 'react-router-dom';
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -18,11 +20,12 @@ import Paper from '@material-ui/core/Paper';
 import * as Converters from '../utilities/converters';
 
 import {
+  StravatronDetailedSegment,
   StravatronSegmentEffort,
 } from '../types';
 
 import { loadSegmentEffortResults } from '../controllers';
-import { getSegmentEffortResults } from '../selectors';
+import { getSegment, getSegmentEffortResults } from '../selectors';
 
 type Order = 'asc' | 'desc';
 interface SegmentEffortData {
@@ -145,12 +148,22 @@ const useStyles = makeStyles((theme: Theme) =>
     tableButtonColumnWidth: {
       width: '48px',
     },
+    summaryContainer: {
+      backgroundColor: 'lightGray',
+      paddingBottom: '16px'
+    },
+    boldParagraph: {
+      fontWeight: 'bold',
+      marginTop: '4px',
+      marginBottom: '4px'
+    }
   }),
 );
 
 
 export interface SegmentEffortResultsProps {
   segmentId: number;
+  segment: StravatronDetailedSegment;
   segmentEffortResults: StravatronSegmentEffort[];
   onLoadSegmentEfforts: (segmentId: number) => any;
 }
@@ -175,7 +188,13 @@ const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
   console.log('segmentEffortResults');
   console.log(props.segmentEffortResults);
 
-  const getSegmentEffortRows = (): StravatronSegmentEffort[] => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof SegmentEffortData) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const buildSegmentEffortRows = (): StravatronSegmentEffort[] => {
 
     const segmentEfforts: StravatronSegmentEffort[] = props.segmentEffortResults;
 
@@ -200,69 +219,104 @@ const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
     return segmentEffortRows;
   };
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof SegmentEffortData) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  if (Object.keys(props.segmentEffortResults).length > 0) {
+  const buildSegmentEffortsTable = (): any => {
 
     // const rows: StravatronSegmentEffort[] = getSegmentEffortRows();
-    const rows: any[] = getSegmentEffortRows();
+    const rows = buildSegmentEffortRows() as any;
 
     return (
-      <HashRouter>
-        <div className={classes.root}>
-          <Paper className={classes.paper}>
-            <TableContainer style={{ maxHeight: 800 }}>
-              <Table
-                stickyHeader
-                size={'small'}
-              >
-                <SegmentEffortResultsTableHeader
-                  classes={classes}
-                  order={order}
-                  orderBy={orderBy}
-                  onRequestSort={handleRequestSort}
-                />
-                <TableBody>
-                  {stableSort(rows, getSorting(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((segmentEffort: any, index: number) => {
-                      return (
-                        <TableRow
-                          hover
-                          tabIndex={-1}
-                          key={segmentEffort.startDateLocal}
-                        >
-                          <TableCell align='left' className={classes.tableColumnMediumWidth}>{Converters.getDateTime(segmentEffort.startDateLocal)}</TableCell>
-                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.getMovingTime(segmentEffort.movingTime)}</TableCell>
-                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.averageHeartrate) ? 0 : segmentEffort.averageHeartrate.toFixed(0)}</TableCell>
-                          <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.maxHeartrate) ? 0 : segmentEffort.maxHeartrate}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </div>
-      </HashRouter>
+      <TableContainer style={{ maxHeight: 800 }}>
+        <Table
+          stickyHeader
+          size={'small'}
+        >
+          <SegmentEffortResultsTableHeader
+            classes={classes}
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+          />
+          <TableBody>
+            {stableSort(rows, getSorting(order, orderBy))
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((segmentEffort: any, index: number) => {
+                return (
+                  <TableRow
+                    hover
+                    tabIndex={-1}
+                    key={segmentEffort.startDateLocal}
+                  >
+                    <TableCell align='left' className={classes.tableColumnMediumWidth}>{Converters.getDateTime(segmentEffort.startDateLocal)}</TableCell>
+                    <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.getMovingTime(segmentEffort.movingTime)}</TableCell>
+                    <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.averageHeartrate) ? 0 : segmentEffort.averageHeartrate.toFixed(0)}</TableCell>
+                    <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.maxHeartrate) ? 0 : segmentEffort.maxHeartrate}</TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  };
+
+  const getSummaryContainer = () => {
+
+    const segment: StravatronDetailedSegment = props.segment;
+
+    let averageGrade = '';
+    if (segment && segment.averageGrade) {
+      averageGrade = segment.averageGrade.toFixed(1) + '%';
+    }
+
+    let totalElevationGain = '';
+    if (segment && segment.totalElevationGain) {
+      totalElevationGain = Converters.metersToFeet(segment.totalElevationGain).toFixed(0) + 'ft';
+    }
+
+    return (
+      <div className={classes.summaryContainer}>
+        <h1>{segment.name}</h1>
+        <p className={classes.boldParagraph}>Distance: {Converters.metersToMiles(segment.distance).toFixed(1)} mi</p>
+        <p className={classes.boldParagraph}>Average grade: {averageGrade}</p>
+        <p className={classes.boldParagraph}>Elevation gain: {totalElevationGain}</p>
+      </div >
+    );
+  };
+
+  if (Object.keys(props.segmentEffortResults).length === 0) {
+    return (
+      <div>
+        Loading...
+      </div>
     );
   }
+
+  const summaryContainer = getSummaryContainer();
+  const segmentEffortsTable = buildSegmentEffortsTable();
+
+  // <Link to='/activities' style={{ marginRight: '12px' }}>Back</Link>
+
   return (
-    <div>
-      Loading...
-    </div>
+    <HashRouter>
+      <div className={classes.root}>
+        <Link to='/' style={{ marginRight: '12px' }}>Home</Link>
+        <Paper className={classes.paper}>
+          {summaryContainer}
+          {segmentEffortsTable}
+        </Paper>
+      </div>
+    </HashRouter>
   );
-}
+};
+
 
 function mapStateToProps(state: any, ownProps: any) {
 
   const _segmentId = parseInt(ownProps.match.params.id, 10);
+
   return {
     segmentId: _segmentId,
+    segment: getSegment(state, _segmentId),
     segmentEffortResults: getSegmentEffortResults(state, _segmentId),
   };
 }

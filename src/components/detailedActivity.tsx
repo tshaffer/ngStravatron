@@ -30,7 +30,7 @@ import {
   getStravatronDetailedActivityAttributes,
   getSegmentEffortsForActivity,
   getSegments,
-} from '../selectors/detailedActivity';
+} from '../selectors';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 type Order = 'asc' | 'desc';
