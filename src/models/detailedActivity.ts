@@ -8,7 +8,6 @@ import { StravaModelBaseAction } from './baseAction';
 // ------------------------------------
 // Constants
 // ------------------------------------
-// export const ADD_DETAILED_ACTIVITY = 'ADD_DETAILED_ACTIVITY';
 export const ADD_DETAILED_ACTIVITY_ATTRIBUTES = 'ADD_DETAILED_ACTIVITY_ATTRIBUTES';
 
 // ------------------------------------

@@ -23,7 +23,6 @@ import {
 import {
   SegmentsMap,
   StravatronDetailedSegment,
-  StravatronSegmentEffortsBySegment,
   StravatronSegmentEffort,
   StravatronActivity,
 } from '../types';
@@ -31,9 +30,7 @@ import {
   getStravatronDetailedActivityAttributes,
   getSegmentEffortsForActivity,
   getSegments,
-  getEffortsForActivitySegments
 } from '../selectors/detailedActivity';
-import moment = require('moment');
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 type Order = 'asc' | 'desc';
@@ -68,35 +65,6 @@ const activityColumnCells: HeadCell[] = [
   { id: 'averageHeartrate', numeric: true, label: 'Average Heartrate', width: '64px' },
   { id: 'maxHeartrate', numeric: true, label: 'Max Heartrate', width: '64px' },
 ];
-
-function desc<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function stableSort<T>(array: T[], cmp: (a: T, b: T) => number) {
-  const stabilized = array.map((el, index) => [el, index] as [T, number]);
-  stabilized.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilized.map((el) => el[0]);
-}
-
-function getSorting<K extends keyof any>(
-  order: Order,
-  orderBy: K,
-): (a: { [key in K]: number | string }, b: { [key in K]: number | string }) => number {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -151,7 +119,6 @@ export interface DetailedActivityProps {
   activityId: number;
   detailedActivity: StravatronActivity;
   segmentEfforts: StravatronSegmentEffort[];
-  effortsForSegments: StravatronSegmentEffortsBySegment;
   segmentsMap: SegmentsMap;
   onLoadDetailedActivity: (activityId: number) => any;
   onForceReloadEfforts: (activityId: number) => any;
@@ -169,12 +136,8 @@ const DetailedActivity = (props: DetailedActivityProps) => {
   const [initialized, setInitialized] = React.useState(false);
 
   const classes = useStyles();
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof DetailedActivityData>('name');
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const { onLoadDetailedActivity, onForceReloadEfforts, onGetMmpData, effortsForSegments, segmentsMap, segmentEfforts } = props;
+  const { onLoadDetailedActivity, onForceReloadEfforts, onGetMmpData, segmentsMap, segmentEfforts } = props;
 
   if (!initialized) {
     console.log('invoke onLoadDetailedActivity');
@@ -190,198 +153,6 @@ const DetailedActivity = (props: DetailedActivityProps) => {
   const handleGetMmpData = (activityId: number) => {
     console.log('handleGetMmpData: ', activityId);
     onGetMmpData(activityId);
-  };
-
-  const analyzeEffortsForSegment = (effortsForSegment: StravatronSegmentEffort[]): any => {
-
-    const effortsSortedByMovingTime: StravatronSegmentEffort[] = effortsForSegment.concat();
-    const effortsSortedByDate: StravatronSegmentEffort[] = effortsForSegment.concat();
-
-    // 'best time' by sorting efforts by movingTime
-    effortsSortedByMovingTime.sort((a, b) => {
-
-      const aMovingTime = Number(a.movingTime);
-      const bMovingTime = Number(b.movingTime);
-
-      if (aMovingTime > bMovingTime) {
-        return 1;
-      }
-      if (aMovingTime < bMovingTime) {
-        return -1;
-      }
-      return 0;
-    });
-
-    // most recent will be first in the array
-    effortsSortedByDate.sort((a, b) => {
-
-      const aDate = a.startDateLocal;
-      const bDate = b.startDateLocal;
-
-      if (aDate < bDate) {
-        return 1;
-      }
-      if (aDate > bDate) {
-        return -1;
-      }
-      return 0;
-    });
-
-    const analyzedEffortsForSegment =
-    {
-      effortsSortedByMovingTime,
-      effortsSortedByDate
-    };
-
-    return analyzedEffortsForSegment;
-  };
-
-  // const getRecentEffort = (recentEfforts: any[], recentEffortIndex: number) => {
-  //   switch (recentEffortIndex) {
-  //     case 0:
-  //       return <span>pizza</span>;
-  //     case 1:
-  //       return <span>burger</span>;
-  //     case 2:
-  //       return <span>salami</span>;
-  //   }
-  //   return null;
-  // };
-
-  const buildRecentEffortJsx = (recentEffort: any) => {
-    const recentEffortJsx =
-      <div>
-        <span>{Converters.elapsedTimeToTimeString(recentEffort.movingTime)}</span>
-        <span> on </span>
-        <span className='smallDimDate'>{Converters.formatDate(recentEffort.date)}</span>
-      </div>
-      ;
-    return recentEffortJsx;
-  };
-
-  const buildRecentEffortsJsx = (recentEfforts: any[]) => {
-    const recentEffortEntries = recentEfforts.map((recentEffort: any) => {
-      return buildRecentEffortJsx(recentEffort);
-    });
-    return recentEffortEntries;
-  };
-
-
-  // TEDTODO - come up with a better name - it's not just recent efforts
-  const buildRecentEfforts = (segmentId: number): any => {
-
-    let recentEffortsLbl: any;
-    let effortsForSegmentLbl: any;
-
-    if (!isNil(effortsForSegments)) {
-      const stravatronEffortsForSegments: StravatronSegmentEffortsBySegment = effortsForSegments;
-      if (stravatronEffortsForSegments.hasOwnProperty(segmentId)) {
-        const effortsForSegment: StravatronSegmentEffort[] = stravatronEffortsForSegments[segmentId];
-        const effortData = analyzeEffortsForSegment(effortsForSegment);
-
-        const bestEffortTime = Converters.getMovingTime(effortData.effortsSortedByMovingTime[0].movingTime);
-        const bestEffortDate = moment(effortData.effortsSortedByMovingTime[0].startDateLocal).format('YYYY-MM-DD');
-
-        effortsForSegmentLbl =
-          (
-            <span>
-              <span>{bestEffortTime}</span>
-              <span> on </span>
-              <span className='smallDimDate'>{bestEffortDate}</span>
-            </span>
-          );
-
-        if (!isNil(effortData.effortsSortedByMovingTime[1])) {
-          const nextBestEffortTime = Converters.getMovingTime(effortData.effortsSortedByMovingTime[1].movingTime);
-          const nextBestEffortDate =
-            moment(effortData.effortsSortedByMovingTime[1].startDateLocal).format('YYYY-MM-DD');
-
-          effortsForSegmentLbl =
-            (
-              <span>
-                <span>{bestEffortTime}</span>
-                <span> on </span>
-                <span className='smallDimDate'>{bestEffortDate}</span>
-                <span>, {nextBestEffortTime}</span>
-                <span> on </span>
-                <span className='smallDimDate'>{nextBestEffortDate}</span>
-              </span>
-            );
-        }
-
-        // effortsSortedByDate
-        const recentEfforts = [];
-        // const recentEffort =
-        // {
-        //   movingTime: '',
-        //   date: '',
-        //   separator: ''
-        // };
-
-        // recentEfforts.push(recentEffort);
-        // recentEfforts.push(recentEffort);
-        // recentEfforts.push(recentEffort);
-
-        let index = 0;
-        while (index < 3) {
-          if (effortData.effortsSortedByDate.length > (index + 1)) {
-            const effort = effortData.effortsSortedByDate[index + 1];
-            const recentEffort = {
-              movingTime: effort.movingTime,
-              date: effort.startDateLocal,
-              separator: ','
-            };
-            recentEfforts.push(recentEffort);
-            // recentEfforts[index] =
-            // {
-            //   movingTime: effort.movingTime,
-            //   date: effort.startDateLocal,
-            //   separator: ', '
-            // };
-          }
-          index++;
-        }
-
-        recentEffortsLbl = buildRecentEffortsJsx(recentEfforts);
-
-        // const line1 = getRecentEffort(recentEfforts, 0);
-
-        // recentEffortsLbl = (
-        //   { line1 }
-        // );
-
-        // recentEffortsLbl =
-        //   (
-        //     <span>
-        //       <span>pizza</span>
-        //       <span> on </span>
-        //       <span>Tuesday</span>
-        //     </span>
-        //   );
-
-        //   (
-        //     { this.getRecentEffort(0) }
-        // //     { this.getRecentEffort(1) }
-        // // { this.getRecentEffort(2) }
-        //   );
-        // }
-        //   <span>
-        //     <span>{Converters.elapsedTimeToTimeString(recentEfforts[0].movingTime)}</span>
-        //     <span> on </span>
-        //     <span className='smallDimDate'>{Converters.formatDate(recentEfforts[0].date)}</span>
-        //     <span>{recentEfforts[1].separator}</span>
-        //     <span>{Converters.elapsedTimeToTimeString(recentEfforts[1].movingTime)}</span>
-        //     <span> on </span>
-        //     <span className='smallDimDate'>{Converters.formatDate(recentEfforts[1].date)}</span>
-        //     <span>{recentEfforts[2].separator}</span>
-        //     <span>{Converters.elapsedTimeToTimeString(recentEfforts[2].movingTime)}</span>
-        //     <span> on </span>
-        //     <span className='smallDimDate'>{Converters.formatDate(recentEfforts[2].date)}</span>
-        //   </span>
-        // );
-      }
-    }
-    return { recentEffortsLbl, effortsForSegmentLbl };
   };
 
   const buildSegmentEffortRow = (segmentEffort: StravatronSegmentEffort) => {
@@ -402,17 +173,6 @@ const DetailedActivity = (props: DetailedActivityProps) => {
       totalElevationGain = Converters.metersToFeet(segment.totalElevationGain).toFixed(0) + 'ft';
     }
 
-    const effortsData = buildRecentEfforts(segmentId);
-    const { recentEffortsLbl, effortsForSegmentLbl } = effortsData;
-    /*
-        <td>
-          <button onClick={() => {
-            self.handleAllActivitiesWithThisSegment(segment.id);
-          }
-          }>Show all...</button>
-        </td>
-    */
-
     const { averageWatts, normalizedPower } = segmentEffort;
     const normalizedPowerLbl = isNil(normalizedPower) ? '' : normalizedPower.toFixed(1);
     const averageWattsLbl = isNil(averageWatts) ? 0 : averageWatts;
@@ -424,12 +184,6 @@ const DetailedActivity = (props: DetailedActivityProps) => {
         </TableCell>
         <TableCell style={{ width: '64px' }}>
           {Converters.getMovingTime(segmentEffort.movingTime)}
-        </TableCell>
-        <TableCell>
-          {effortsForSegmentLbl}
-        </TableCell>
-        <TableCell>
-          {recentEffortsLbl}
         </TableCell>
         <TableCell>
           {Converters.metersToMiles(segmentEffort.distance).toFixed(1)} mi
@@ -456,6 +210,7 @@ const DetailedActivity = (props: DetailedActivityProps) => {
           {segmentEffort.maxHeartrate}
         </TableCell>
         <TableCell>
+          <Link to={'/segmentEffortResults/' + segmentEffort.segmentId.toString()}>All Results</Link>
         </TableCell>
       </TableRow>
     );
@@ -497,8 +252,6 @@ const DetailedActivity = (props: DetailedActivityProps) => {
             <TableRow>
               <TableCell style={{ width: '192px' }}>Name</TableCell>
               <TableCell style={{ width: '64px' }}>Time</TableCell>
-              <TableCell>Best Times</TableCell>
-              <TableCell>Recent Efforts</TableCell>
               <TableCell>Distance</TableCell>
               <TableCell>Speed</TableCell>
               <TableCell>Average Grade</TableCell>
@@ -632,7 +385,6 @@ function mapStateToProps(state: any, ownProps: any) {
     activityId: parseInt(ownProps.match.params.id, 10),
     detailedActivity: getStravatronDetailedActivityAttributes(state, parseInt(ownProps.match.params.id, 10)),
     segmentEfforts: getSegmentEffortsForActivity(state, parseInt(ownProps.match.params.id, 10)),
-    effortsForSegments: getEffortsForActivitySegments(state, parseInt(ownProps.match.params.id, 10)),
     segmentsMap: getSegments(state),
   };
 }

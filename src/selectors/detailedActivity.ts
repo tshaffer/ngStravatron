@@ -17,7 +17,24 @@ export const getStravatronDetailedActivityAttributes = (state: StravaModelState,
   return fullActivity;
 };
 
-// https://lodash.com/docs/4.17.15#filter
+export const getSegmentEffortsForSegment = (state: StravaModelState, segmentId: number):  StravatronSegmentEffort[] => {
+
+  const segmentEfforts: StravatronSegmentEffort[] = [];
+
+  for (const segmentEffortId in state.segmentEfforts) {
+    if (state.segmentEfforts.hasOwnProperty(segmentEffortId)) {
+      const segmentEffort: StravatronSegmentEffort = state.segmentEfforts[segmentEffortId];
+      if (segmentEffort.segmentId === segmentId) {
+        segmentEfforts.push(segmentEffort);
+      }
+    }
+  }
+
+  return segmentEfforts;
+
+};
+
+  // https://lodash.com/docs/4.17.15#filter
 export const getSegmentEffortsForActivity = (state: StravaModelState, activityId: number): StravatronSegmentEffort[] => {
 
   const segmentEfforts: StravatronSegmentEffort[] = [];
