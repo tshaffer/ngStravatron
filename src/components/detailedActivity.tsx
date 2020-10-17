@@ -210,7 +210,7 @@ const DetailedActivity = (props: DetailedActivityProps) => {
           {segmentEffort.maxHeartrate}
         </TableCell>
         <TableCell>
-          <Link to={'/segmentEffortResults/' + segmentEffort.segmentId.toString()}>All Results</Link>
+          <Link to={'/segmentEffortResults/' + segmentEffort.segmentId.toString() + '/' + props.activityId.toString()}>All Results</Link>
         </TableCell>
       </TableRow>
     );

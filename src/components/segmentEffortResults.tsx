@@ -164,6 +164,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 export interface SegmentEffortResultsProps {
+  activityId: number;
   segmentId: number;
   segment: StravatronDetailedSegment;
   segmentEffortResults: StravatronSegmentEffort[];
@@ -178,7 +179,7 @@ const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [initialized, setInitialized] = React.useState(false);
 
-  const { onLoadSegmentEfforts, segmentId } = props;
+  const { onLoadSegmentEfforts, activityId, segmentId } = props;
 
   if (!initialized) {
     console.log('invoke onLoadSegmentEfforts');
@@ -315,12 +316,12 @@ const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
   const summaryContainer = getSummaryContainer();
   const segmentEffortsTable = buildSegmentEffortsTable();
 
-  // <Link to='/activities' style={{ marginRight: '12px' }}>Back</Link>
-
+  const backRoute = '/detailedActivity/' + activityId.toString();
   return (
     <HashRouter>
       <div className={classes.root}>
         <Link to='/' style={{ marginRight: '12px' }}>Home</Link>
+        <Link to={backRoute} style={{ marginRight: '12px' }}>Back</Link>
         <Paper className={classes.paper}>
           {summaryContainer}
           {segmentEffortsTable}
@@ -336,6 +337,7 @@ function mapStateToProps(state: any, ownProps: any) {
   const _segmentId = parseInt(ownProps.match.params.id, 10);
 
   return {
+    activityId: ownProps.match.params.activityId,
     segmentId: _segmentId,
     segment: getSegment(state, _segmentId),
     segmentEffortResults: getSegmentEffortResults(state, _segmentId),

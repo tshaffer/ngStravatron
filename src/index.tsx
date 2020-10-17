@@ -13,10 +13,10 @@ import { rootReducer } from './models';
 import App from './components/app';
 import Activities from './components/activities';
 import DetailedActivity from './components/detailedActivity';
+import SegmentEffortResults from './components/segmentEffortResults';
 
-// export const serverUrl = 'http://localhost:5000';
-// export const serverUrl = 'https://damp-falls-28733.herokuapp.com';
-export const serverUrl = 'https://limitless-sands-40320.herokuapp.com/';
+export const serverUrl = 'http://localhost:8000/';
+// export const serverUrl = 'https://limitless-sands-40320.herokuapp.com/';
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
@@ -24,6 +24,7 @@ const store = createStore(
     applyMiddleware(thunkMiddleware)
   ));
 
+// <Route exact path='/segmentEffortResults/:id' component={SegmentEffortResults}/>
 ReactDOM.render(
   <Provider store={store}>
     <HashRouter>
@@ -31,6 +32,7 @@ ReactDOM.render(
         <Route exact path='/' component={App} />
         <Route exact path='/detailedActivity/:id' component={DetailedActivity}/>
         <Route exact path='/activities' component={Activities} />
+        <Route exact path='/segmentEffortResults/:id/:activityId' component={SegmentEffortResults}/>
       </Switch>
     </HashRouter>
   </Provider>,
