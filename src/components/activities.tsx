@@ -19,7 +19,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { TablePagination, Link } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 
 import { ActivitiesMap, StravatronSummaryActivity, StravatronActivity } from '../types';
 import { getActivities } from '../selectors';

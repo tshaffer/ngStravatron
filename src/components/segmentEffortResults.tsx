@@ -17,6 +17,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
+import { TablePagination } from '@material-ui/core';
+
 import * as Converters from '../utilities/converters';
 
 import {
@@ -174,10 +176,9 @@ const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
   const [orderBy, setOrderBy] = React.useState<keyof SegmentEffortData>('date');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [initialized, setInitialized] = React.useState(false);
 
   const { onLoadSegmentEfforts, segmentId } = props;
-
-  const [initialized, setInitialized] = React.useState(false);
 
   if (!initialized) {
     console.log('invoke onLoadSegmentEfforts');
@@ -187,6 +188,15 @@ const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
 
   console.log('segmentEffortResults');
   console.log(props.segmentEffortResults);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof SegmentEffortData) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -225,37 +235,48 @@ const SegmentEffortResults = (props: SegmentEffortResultsProps) => {
     const rows = buildSegmentEffortRows() as any;
 
     return (
-      <TableContainer style={{ maxHeight: 800 }}>
-        <Table
-          stickyHeader
-          size={'small'}
-        >
-          <SegmentEffortResultsTableHeader
-            classes={classes}
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-          />
-          <TableBody>
-            {stableSort(rows, getSorting(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((segmentEffort: any, index: number) => {
-                return (
-                  <TableRow
-                    hover
-                    tabIndex={-1}
-                    key={segmentEffort.startDateLocal}
-                  >
-                    <TableCell align='left' className={classes.tableColumnMediumWidth}>{Converters.getDateTime(segmentEffort.startDateLocal)}</TableCell>
-                    <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.getMovingTime(segmentEffort.movingTime)}</TableCell>
-                    <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.averageHeartrate) ? 0 : segmentEffort.averageHeartrate.toFixed(0)}</TableCell>
-                    <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.maxHeartrate) ? 0 : segmentEffort.maxHeartrate}</TableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div>
+        <TableContainer style={{ maxHeight: 800 }}>
+          <Table
+            stickyHeader
+            size={'small'}
+          >
+            <SegmentEffortResultsTableHeader
+              classes={classes}
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+            />
+            <TableBody>
+              {stableSort(rows, getSorting(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((segmentEffort: any, index: number) => {
+                  return (
+                    <TableRow
+                      hover
+                      tabIndex={-1}
+                      key={segmentEffort.startDateLocal}
+                    >
+                      <TableCell align='left' className={classes.tableColumnMediumWidth}>{Converters.getDateTime(segmentEffort.startDateLocal)}</TableCell>
+                      <TableCell align='right' className={classes.tableColumnMediumWidth}>{Converters.getMovingTime(segmentEffort.movingTime)}</TableCell>
+                      <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.averageHeartrate) ? 0 : segmentEffort.averageHeartrate.toFixed(0)}</TableCell>
+                      <TableCell align='right' className={classes.tableColumnMediumWidth}>{isNil(segmentEffort.maxHeartrate) ? 0 : segmentEffort.maxHeartrate}</TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 15, 25]}
+          component='div'
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </div>
     );
   };
 
