@@ -131,7 +131,7 @@ export interface DetailedActivityProps {
 
 const DetailedActivity = (props: DetailedActivityProps) => {
 
-  console.log('DetailedActivity invoked');
+  // console.log('DetailedActivity invoked');
 
   const [initialized, setInitialized] = React.useState(false);
 
@@ -241,7 +241,7 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
   const buildSegmentEffortsTable = () => {
 
-    console.log(segmentEfforts);
+    // console.log(segmentEfforts);
 
     const segmentEffortRows = buildSegmentEffortRows(segmentEfforts);
 
@@ -350,11 +350,11 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
   const activity = props.detailedActivity;
 
-  console.log('detailedActivityAttributes');
-  console.log(activity);
+  // console.log('detailedActivityAttributes');
+  // console.log(activity);
 
-  console.log('segmentEfforts');
-  console.log(segmentEfforts);
+  // console.log('segmentEfforts');
+  // console.log(segmentEfforts);
 
   if (isNil(activity)) {
     return <div>Loading...</div>;
@@ -378,8 +378,8 @@ const DetailedActivity = (props: DetailedActivityProps) => {
 
 function mapStateToProps(state: any, ownProps: any) {
 
-  console.log(state);
-  console.log(ownProps);
+  // console.log(state);
+  // console.log(ownProps);
 
   return {
     activityId: parseInt(ownProps.match.params.id, 10),

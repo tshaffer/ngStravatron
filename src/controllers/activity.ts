@@ -14,10 +14,7 @@ export const loadSummaryActivities = (): any => {
       .then((response) => {
         const summaryActivities: any[] = response.data as any[];
         console.log(summaryActivities);
-
-        console.log('add activities');
         dispatch(addActivities(summaryActivities));
-        console.log('add activities complete');
       }).catch((err: Error) => {
         console.log(err);
       });

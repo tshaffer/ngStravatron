@@ -2,7 +2,13 @@ import axios from 'axios';
 import { isArray } from 'lodash';
 import { serverUrl } from '../index';
 
-import { addDetailedActivityAttributes, addSegment, addSegmentEffort, addStreams } from '../models';
+import {
+  addDetailedActivityAttributes,
+  addSegments,
+  addSegmentEffort,
+  addSegmentEfforts,
+  addStreams
+} from '../models';
 import {
   StravatronDetailedActivityData, StravatronSegmentEffort
 } from '../types';
@@ -16,6 +22,8 @@ export const loadDetailedActivity = (activityId: number): any => {
     axios.get(path)
       .then((response) => {
 
+        console.log('detailed activity loaded');
+
         const detailedActivityData: StravatronDetailedActivityData = response.data as StravatronDetailedActivityData;
 
         const { detailedActivityAttributes, segments, allSegmentEffortsForSegmentsInActivity, streams } = detailedActivityData;
@@ -23,14 +31,10 @@ export const loadDetailedActivity = (activityId: number): any => {
         dispatch(addDetailedActivityAttributes(activityId, detailedActivityAttributes));
 
         if (isArray(segments)) {
-          for (const detailedSegment of segments) {
-            dispatch(addSegment(detailedSegment.id, detailedSegment));
-          }
+          dispatch(addSegments(segments));
         }
 
-        for (const segmentEffortInActivity of allSegmentEffortsForSegmentsInActivity) {
-          dispatch(addSegmentEffort(segmentEffortInActivity.id, segmentEffortInActivity));
-        }
+        dispatch(addSegmentEfforts(allSegmentEffortsForSegmentsInActivity));
 
         dispatch(addStreams(streams));
 

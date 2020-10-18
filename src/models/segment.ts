@@ -4,11 +4,13 @@ import {
   StravatronDetailedSegment 
 } from '../types';
 import { StravaModelBaseAction, SegmentAction } from './baseAction';
+import { segmentEffortResultsReducer } from './segmentEffortResults';
 
 // ------------------------------------
 // Constants
 // ------------------------------------
 export const ADD_SEGMENT = 'ADD_SEGMENT';
+export const ADD_SEGMENTS = 'ADD_SEGMENTS';
 
 // ------------------------------------
 // Actions
@@ -35,6 +37,23 @@ export const addSegment = (
   };
 };
 
+export interface AddSegmentsPayload {
+  segments: StravatronDetailedSegment[];
+}
+
+export const addSegments = (
+  segments: StravatronDetailedSegment[]
+): SegmentAction<AddSegmentsPayload> => {
+
+  return {
+    type: ADD_SEGMENTS,
+    payload: {
+      segments,
+    },
+  };
+};
+
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -43,13 +62,21 @@ const initialState: SegmentsMap = {};
 
 export const segmentReducer = (
   state: SegmentsMap = initialState,
-  action: StravaModelBaseAction<PartialSegmentDescription & AddSegmentPayload>
+  action: StravaModelBaseAction<PartialSegmentDescription & AddSegmentPayload & AddSegmentsPayload>
 ): SegmentsMap => {
   switch (action.type) {
     case ADD_SEGMENT: {
       const newState = cloneDeep(state);
       const { segmentId, segment } = action.payload;
       newState[segmentId] = segment;
+      return newState;
+    }
+    case ADD_SEGMENTS: {
+      const newState = cloneDeep(state);
+      const { segments } = action.payload;
+      segments.forEach((segment) => {
+        newState[segment.id] = segment;
+      });
       return newState;
     }
     default:
