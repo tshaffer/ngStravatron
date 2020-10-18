@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { addActivity } from '../models/activity';
+import { addActivities } from '../models/activity';
 import { serverUrl } from '../index';
 
 const apiUrlFragment = 'api/v1';
@@ -9,14 +9,15 @@ export const loadSummaryActivities = (): any => {
   return (dispatch: any, getState: any): any => {
     console.log('loadSummaryActivities dispatched');
     const path = serverUrl + apiUrlFragment + '/activities';
+    console.log('fetch activities');
     axios.get(path)
       .then((response) => {
         const summaryActivities: any[] = response.data as any[];
         console.log(summaryActivities);
 
-        for (const activity of summaryActivities) {
-          dispatch(addActivity(activity.id.toString(), activity));
-        }
+        console.log('add activities');
+        dispatch(addActivities(summaryActivities));
+        console.log('add activities complete');
       }).catch((err: Error) => {
         console.log(err);
       });
